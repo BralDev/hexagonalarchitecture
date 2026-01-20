@@ -1,5 +1,6 @@
 package com.example.hexagonal_architecture_example.infraestructure.persistance;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
@@ -29,4 +30,27 @@ public class JpaUserRepositoryAdapter implements UserRepositoryPort{
         return Optional.of(new User(savedUser.id(), savedUser.firstName(), savedUser.lastName()));
     }
 
+    @Override
+    public List<User> findByFirstName(String firstName) {
+        return springDataUserRepository.findByFirstName(firstName)
+                .stream()
+                .map(userEntity -> new User(
+                        userEntity.id(),
+                        userEntity.firstName(),
+                        userEntity.lastName()
+                ))
+                .toList();
+    }
+
+    @Override
+    public List<User> findByLastName(String lastName) {
+        return springDataUserRepository.findByLastName(lastName)
+                .stream()
+                .map(userEntity -> new User(
+                        userEntity.id(),
+                        userEntity.firstName(),
+                        userEntity.lastName()
+                ))
+                .toList();
+    }
 }
