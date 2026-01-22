@@ -8,6 +8,8 @@ import com.example.hexagonal_architecture_example.application.port.in.GetUserByI
 import com.example.hexagonal_architecture_example.application.port.in.GetUsersByFirstNameUseCase;
 import com.example.hexagonal_architecture_example.application.port.in.GetUsersByLastNameUseCase;
 import com.example.hexagonal_architecture_example.domain.model.User;
+import com.example.hexagonal_architecture_example.infraestructure.controller.dto.PageMeta;
+import com.example.hexagonal_architecture_example.infraestructure.controller.dto.PageResponse;
 import com.example.hexagonal_architecture_example.infraestructure.controller.dto.UserReponse;
 import com.example.hexagonal_architecture_example.infraestructure.controller.dto.UserRequest;
 
@@ -64,38 +66,44 @@ public class UserController {
     }
 
     @GetMapping("/search/firstname")
-    public PageResult<UserReponse> searchByFirstName(
+    public PageResponse<UserReponse> searchByFirstName(
             @RequestParam String value,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
         PageResult<User> result = getUsersByFirstNameUseCase.execute(value, page, size);
 
-        return new PageResult<>(
+        return new PageResponse<>(
                 result.content().stream()
                         .map(u -> new UserReponse(u.id(), u.firstName(), u.lastName()))
                         .toList(),
-                result.page(),
-                result.size(),
-                result.totalElements(),
-                result.totalPages());
+                new PageMeta(
+                    result.page(),
+                    result.size(),
+                    result.totalElements(),
+                    result.totalPages()
+            )
+        );
     }
 
     @GetMapping("/search/lastname")
-    public PageResult<UserReponse> searchByLastName(
+    public PageResponse<UserReponse> searchByLastName(
             @RequestParam String value,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
         PageResult<User> result = getUsersByLastNameUseCase.execute(value, page, size);
 
-        return new PageResult<>(
+        return new PageResponse<>(
                 result.content().stream()
                         .map(u -> new UserReponse(u.id(), u.firstName(), u.lastName()))
                         .toList(),
-                result.page(),
-                result.size(),
-                result.totalElements(),
-                result.totalPages());
+                new PageMeta(
+                    result.page(),
+                    result.size(),
+                    result.totalElements(),
+                    result.totalPages()
+            )
+        );
     }
 }
