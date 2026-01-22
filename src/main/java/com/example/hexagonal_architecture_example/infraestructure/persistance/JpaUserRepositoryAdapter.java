@@ -15,67 +15,67 @@ import com.example.hexagonal_architecture_example.domain.model.User;
 @Repository
 public class JpaUserRepositoryAdapter implements UserRepositoryPort {
 
-    private final SpringDataUserRepository springDataUserRepository;
+        private final SpringDataUserRepository springDataUserRepository;
 
-    public JpaUserRepositoryAdapter(SpringDataUserRepository springDataUserRepository) {
-        this.springDataUserRepository = springDataUserRepository;
-    }
+        public JpaUserRepositoryAdapter(SpringDataUserRepository springDataUserRepository) {
+                this.springDataUserRepository = springDataUserRepository;
+        }
 
-    @Override
-    public User save(User user) {
-        UserEntity userEntity = new UserEntity(user.id(), user.firstName(), user.lastName());
-        final UserEntity savedUser = springDataUserRepository.save(userEntity);
-        return new User(savedUser.id(), savedUser.firstName(), savedUser.lastName());
-    }
+        @Override
+        public User save(User user) {
+                UserEntity userEntity = new UserEntity(user.id(), user.firstName(), user.lastName());
+                final UserEntity savedUser = springDataUserRepository.save(userEntity);
+                return new User(savedUser.id(), savedUser.firstName(), savedUser.lastName());
+        }
 
-    @Override
-    public Optional<User> findById(Long id) {
-        final UserEntity savedUser = springDataUserRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
-        return Optional.of(new User(savedUser.id(), savedUser.firstName(), savedUser.lastName()));
-    }
+        @Override
+        public Optional<User> findById(Long id) {
+                final UserEntity savedUser = springDataUserRepository.findById(id)
+                                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                return Optional.of(new User(savedUser.id(), savedUser.firstName(), savedUser.lastName()));
+        }
 
-    @Override
-    public PageResult<User> findByFirstNameContaining(
-            String firstName,
-            int page,
-            int size) {
-        Pageable pageable = PageRequest.of(page, size);
+        @Override
+        public PageResult<User> findByFirstNameContaining(
+                        String firstName,
+                        int page,
+                        int size) {
+                Pageable pageable = PageRequest.of(page, size);
 
-        Page<UserEntity> result = springDataUserRepository
-                .findByFirstNameContainingIgnoreCase(firstName, pageable);
+                Page<UserEntity> result = springDataUserRepository
+                                .findByFirstNameContainingIgnoreCase(firstName, pageable);
 
-        List<User> users = result.getContent().stream()
-                .map(e -> new User(e.id(), e.firstName(), e.lastName()))
-                .toList();
+                List<User> users = result.getContent().stream()
+                                .map(e -> new User(e.id(), e.firstName(), e.lastName()))
+                                .toList();
 
-        return new PageResult<>(
-                users,
-                result.getNumber(),
-                result.getSize(),
-                result.getTotalElements(),
-                result.getTotalPages());
-    }
+                return new PageResult<>(
+                                users,
+                                result.getNumber(),
+                                result.getSize(),
+                                result.getTotalElements(),
+                                result.getTotalPages());
+        }
 
-    @Override
-    public PageResult<User> findByLastNameContaining(
-        String lastName,
-        int page,
-        int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        
-        Page<UserEntity> result = springDataUserRepository
-                .findByLastNameContainingIgnoreCase(lastName, pageable);
+        @Override
+        public PageResult<User> findByLastNameContaining(
+                        String lastName,
+                        int page,
+                        int size) {
+                Pageable pageable = PageRequest.of(page, size);
 
-        List<User> users = result.getContent().stream()
-                .map(e -> new User(e.id(), e.firstName(), e.lastName()))
-                .toList();
+                Page<UserEntity> result = springDataUserRepository
+                                .findByLastNameContainingIgnoreCase(lastName, pageable);
 
-        return new PageResult<>(
-                users,
-                result.getNumber(),
-                result.getSize(),
-                result.getTotalElements(),
-                result.getTotalPages());
-    }
+                List<User> users = result.getContent().stream()
+                                .map(e -> new User(e.id(), e.firstName(), e.lastName()))
+                                .toList();                
+
+                return new PageResult<>(
+                                users,
+                                result.getNumber(),
+                                result.getSize(),
+                                result.getTotalElements(),
+                                result.getTotalPages());
+        }
 }
