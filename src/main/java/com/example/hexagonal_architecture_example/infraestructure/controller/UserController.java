@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.hexagonal_architecture_example.application.common.PageResult;
 import com.example.hexagonal_architecture_example.application.common.SortDirection;
+import com.example.hexagonal_architecture_example.application.common.UserSearchFilter;
 import com.example.hexagonal_architecture_example.application.common.UserSortField;
 import com.example.hexagonal_architecture_example.application.port.in.CreateUserUseCase;
 import com.example.hexagonal_architecture_example.application.port.in.GetUserByIdUseCase;
@@ -125,9 +126,10 @@ public class UserController {
                         @RequestParam(required = false) SortDirection direction
                 ) {
 
+                UserSearchFilter filter = new UserSearchFilter(firstname, lastname);
+
                 PageResult<User> result = searchUsersUseCase.execute(
-                        firstname,
-                        lastname,
+                        filter,
                         page,
                         size,
                         sortField,

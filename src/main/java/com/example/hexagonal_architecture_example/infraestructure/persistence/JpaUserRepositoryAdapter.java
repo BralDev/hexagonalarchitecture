@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import com.example.hexagonal_architecture_example.application.common.PageResult;
 import com.example.hexagonal_architecture_example.application.common.SortDirection;
+import com.example.hexagonal_architecture_example.application.common.UserSearchFilter;
 import com.example.hexagonal_architecture_example.application.common.UserSortField;
 import com.example.hexagonal_architecture_example.application.port.out.UserRepositoryPort;
 import com.example.hexagonal_architecture_example.domain.model.User;
@@ -85,8 +86,7 @@ public class JpaUserRepositoryAdapter implements UserRepositoryPort {
 
         @Override
         public PageResult<User> search(
-                        String firstName,
-                        String lastName,
+                        UserSearchFilter filter,
                         int page,
                         int size,
                         UserSortField sortField,
@@ -101,8 +101,8 @@ public class JpaUserRepositoryAdapter implements UserRepositoryPort {
                 Pageable pageable = PageRequest.of(page, size, sort);
 
                 Specification<UserEntity> spec = Specification
-                                .where(UserSpecifications.firstNameContains(firstName))
-                                .and(UserSpecifications.lastNameContains(lastName));
+                                .where(UserSpecifications.firstNameContains(filter.firstName()))
+                                .and(UserSpecifications.lastNameContains(filter.lastName()));
 
                 Page<UserEntity> result = springDataUserRepository.findAll(spec, pageable);
 
