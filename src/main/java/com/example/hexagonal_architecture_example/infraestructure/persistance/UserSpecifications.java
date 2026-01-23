@@ -2,7 +2,9 @@ package com.example.hexagonal_architecture_example.infraestructure.persistance;
 
 import org.springframework.data.jpa.domain.Specification;
 
-public class UserSpecifications {
+public final class UserSpecifications {
+
+    private UserSpecifications() {}
 
     public static Specification<UserEntity> firstNameContains(String firstName) {
         return (root, query, cb) ->

@@ -4,12 +4,15 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 
 import com.example.hexagonal_architecture_example.application.common.PageResult;
+import com.example.hexagonal_architecture_example.application.common.SortDirection;
+import com.example.hexagonal_architecture_example.application.common.UserSortField;
 import com.example.hexagonal_architecture_example.application.port.out.UserRepositoryPort;
 import com.example.hexagonal_architecture_example.domain.model.User;
 
@@ -85,8 +88,17 @@ public class JpaUserRepositoryAdapter implements UserRepositoryPort {
                         String firstName,
                         String lastName,
                         int page,
-                        int size) {
-                Pageable pageable = PageRequest.of(page, size);
+                        int size,
+                        UserSortField sortField,
+                        SortDirection direction) {
+
+                Sort sort = Sort.by(
+                                direction == SortDirection.ASC
+                                                ? Sort.Direction.ASC
+                                                : Sort.Direction.DESC,
+                                sortField.column());
+
+                Pageable pageable = PageRequest.of(page, size, sort);
 
                 Specification<UserEntity> spec = Specification
                                 .where(UserSpecifications.firstNameContains(firstName))

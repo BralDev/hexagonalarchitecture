@@ -3,6 +3,8 @@ package com.example.hexagonal_architecture_example.infraestructure.controller;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.hexagonal_architecture_example.application.common.PageResult;
+import com.example.hexagonal_architecture_example.application.common.SortDirection;
+import com.example.hexagonal_architecture_example.application.common.UserSortField;
 import com.example.hexagonal_architecture_example.application.port.in.CreateUserUseCase;
 import com.example.hexagonal_architecture_example.application.port.in.GetUserByIdUseCase;
 import com.example.hexagonal_architecture_example.application.port.in.GetUsersByFirstNameUseCase;
@@ -118,9 +120,18 @@ public class UserController {
                         @RequestParam(required = false) String firstname,
                         @RequestParam(required = false) String lastname,
                         @RequestParam(defaultValue = "0") int page,
-                        @RequestParam(defaultValue = "10") int size) {
+                        @RequestParam(defaultValue = "10") int size,
+                        @RequestParam(required = false) UserSortField sortField,
+                        @RequestParam(required = false) SortDirection direction
+                ) {
 
-                PageResult<User> result = searchUsersUseCase.execute(firstname, lastname, page, size);
+                PageResult<User> result = searchUsersUseCase.execute(
+                        firstname,
+                        lastname,
+                        page,
+                        size,
+                        sortField,
+                        direction);
 
                 return new PageResponse<>(
                                 result.content().stream()
