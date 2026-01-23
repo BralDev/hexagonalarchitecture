@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
@@ -69,7 +70,33 @@ public class JpaUserRepositoryAdapter implements UserRepositoryPort {
 
                 List<User> users = result.getContent().stream()
                                 .map(e -> new User(e.id(), e.firstName(), e.lastName()))
-                                .toList();                
+                                .toList();
+
+                return new PageResult<>(
+                                users,
+                                result.getNumber(),
+                                result.getSize(),
+                                result.getTotalElements(),
+                                result.getTotalPages());
+        }
+
+        @Override
+        public PageResult<User> search(
+                        String firstName,
+                        String lastName,
+                        int page,
+                        int size) {
+                Pageable pageable = PageRequest.of(page, size);
+
+                Specification<UserEntity> spec = Specification
+                                .where(UserSpecifications.firstNameContains(firstName))
+                                .and(UserSpecifications.lastNameContains(lastName));
+
+                Page<UserEntity> result = springDataUserRepository.findAll(spec, pageable);
+
+                List<User> users = result.getContent().stream()
+                                .map(e -> new User(e.id(), e.firstName(), e.lastName()))
+                                .toList();
 
                 return new PageResult<>(
                                 users,

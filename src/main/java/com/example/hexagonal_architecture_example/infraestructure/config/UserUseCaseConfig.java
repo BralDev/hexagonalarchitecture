@@ -7,6 +7,7 @@ import com.example.hexagonal_architecture_example.application.port.in.CreateUser
 import com.example.hexagonal_architecture_example.application.port.in.GetUserByIdUseCase;
 import com.example.hexagonal_architecture_example.application.port.in.GetUsersByFirstNameUseCase;
 import com.example.hexagonal_architecture_example.application.port.in.GetUsersByLastNameUseCase;
+import com.example.hexagonal_architecture_example.application.port.in.SearchUsersUseCase;
 import com.example.hexagonal_architecture_example.application.port.out.UserRepositoryPort;
 
 @Configuration
@@ -38,5 +39,12 @@ public class UserUseCaseConfig {
             UserRepositoryPort userRepositoryPort
     ) {
         return new GetUsersByLastNameUseCase(userRepositoryPort);
+    }
+
+    @Bean
+    public SearchUsersUseCase searchUsersUseCase(
+            UserRepositoryPort userRepositoryPort
+    ) {
+        return new SearchUsersUseCase(userRepositoryPort);
     }
 }

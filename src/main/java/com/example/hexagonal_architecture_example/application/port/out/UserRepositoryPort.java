@@ -10,4 +10,5 @@ public interface UserRepositoryPort {
     Optional<User> findById(Long id);
     PageResult<User> findByFirstNameContaining(String firstName, int page, int size);
     PageResult<User> findByLastNameContaining(String lastName, int page, int size);
+    PageResult<User> search(String firstName, String lastName, int page, int size);
 }
