@@ -21,6 +21,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+@Tag(
+    name = "Users",
+    description = "Operaciones relacionadas con usuarios"
+)
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -107,7 +113,7 @@ public class UserController {
                                                 result.totalPages()));
         }
 
-        @GetMapping("/search/joined")
+        @GetMapping
         public PageResponse<UserReponse> searchUsers(
                         @RequestParam(required = false) String firstname,
                         @RequestParam(required = false) String lastname,
