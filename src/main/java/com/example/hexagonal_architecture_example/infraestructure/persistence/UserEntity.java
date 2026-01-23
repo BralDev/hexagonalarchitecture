@@ -1,4 +1,4 @@
-package com.example.hexagonal_architecture_example.infraestructure.persistance;
+package com.example.hexagonal_architecture_example.infraestructure.persistence;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

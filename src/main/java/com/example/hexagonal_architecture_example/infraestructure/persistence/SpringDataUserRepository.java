@@ -1,4 +1,4 @@
-package com.example.hexagonal_architecture_example.infraestructure.persistance;
+package com.example.hexagonal_architecture_example.infraestructure.persistence;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;

@@ -1,4 +1,4 @@
-package com.example.hexagonal_architecture_example.infraestructure.persistance;
+package com.example.hexagonal_architecture_example.infraestructure.persistence;
 
 import java.util.List;
 import java.util.Optional;
