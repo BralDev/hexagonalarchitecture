@@ -133,7 +133,7 @@ public class UserController {
         public PageResponse<UserReponse> searchUsers(
                         @RequestParam(required = false) String firstname,
                         @RequestParam(required = false) String lastname,
-                        @RequestParam(required = false) UserStatus status,
+                        @RequestParam(required = false, defaultValue = "ACTIVE") UserStatus status,
                         @RequestParam(defaultValue = "0") int page,
                         @RequestParam(defaultValue = "10") int size,
                         @RequestParam(required = false, defaultValue = "ID") UserSortField sortField,
