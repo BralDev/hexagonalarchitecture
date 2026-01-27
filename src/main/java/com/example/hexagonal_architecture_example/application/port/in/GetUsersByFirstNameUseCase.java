@@ -28,14 +28,18 @@ public class GetUsersByFirstNameUseCase {
 
         UserSearchFilter filter = new UserSearchFilter(firstName, null, resolvedStatus, null, null);
 
+        int resolvedPage = Math.max(page, 0);
+
+        int resolvedSize = size > 0 ? Math.min(size, 100) : 10;
+
         UserSortField resolvedSortField = sortField != null ? sortField : UserSortField.FIRST_NAME;
 
         SortDirection resolvedDirection = direction != null ? direction : SortDirection.ASC;
 
         return userRepository.search(
                 filter,
-                page,
-                size,
+                resolvedPage,
+                resolvedSize,
                 resolvedSortField,
                 resolvedDirection);
     }

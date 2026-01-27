@@ -22,14 +22,18 @@ public class SearchUsersUseCase {
             UserSortField sortField,
             SortDirection direction) {
 
+        int resolvedPage = Math.max(page, 0);
+
+        int resolvedSize = size > 0 ? Math.min(size, 100) : 10;
+
         UserSortField resolvedSortField = sortField != null ? sortField : UserSortField.ID;
 
         SortDirection resolvedDirection = direction != null ? direction : SortDirection.ASC;
 
         return userRepositoryPort.search(
                 filter,
-                page,
-                size,
+                resolvedPage,
+                resolvedSize,
                 resolvedSortField,
                 resolvedDirection);
     }
