@@ -15,7 +15,7 @@ import com.example.hexagonal_architecture_example.users.domain.model.User;
 import com.example.hexagonal_architecture_example.users.domain.model.UserStatus;
 import com.example.hexagonal_architecture_example.users.infraestructure.controller.dto.PageMeta;
 import com.example.hexagonal_architecture_example.users.infraestructure.controller.dto.PageResponse;
-import com.example.hexagonal_architecture_example.users.infraestructure.controller.dto.UserReponse;
+import com.example.hexagonal_architecture_example.users.infraestructure.controller.dto.UserResponse;
 import com.example.hexagonal_architecture_example.users.infraestructure.controller.dto.UserRequest;
 
 import java.time.LocalDate;
@@ -56,7 +56,7 @@ public class UserController {
         }
 
         @PostMapping
-        public UserReponse createUser(@RequestBody UserRequest userRequest) {
+        public UserResponse createUser(@RequestBody UserRequest userRequest) {
                 final User user = new User(
                                 null,
                                 userRequest.firstName(),
@@ -66,7 +66,7 @@ public class UserController {
 
                 final User userCreated = createUserUseCase.execute(user);
 
-                return new UserReponse(
+                return new UserResponse(
                                 userCreated.id(),
                                 userCreated.firstName(),
                                 userCreated.lastName(),
@@ -75,10 +75,10 @@ public class UserController {
         }
 
         @GetMapping("/{id}")
-        public UserReponse getUserById(@PathVariable Long id) {
+        public UserResponse getUserById(@PathVariable Long id) {
                 final User user = getUserUseCase.execute(id);
 
-                return new UserReponse(
+                return new UserResponse(
                                 user.id(),
                                 user.firstName(),
                                 user.lastName(),
@@ -87,7 +87,7 @@ public class UserController {
         }
 
         @GetMapping("/search/firstname")
-        public PageResponse<UserReponse> searchByFirstName(
+        public PageResponse<UserResponse> searchByFirstName(
                         @RequestParam String value,
                         @RequestParam(required = false, defaultValue = "ACTIVE") UserStatus status,
                         @RequestParam(defaultValue = "0") int page,
@@ -105,7 +105,7 @@ public class UserController {
 
                 return new PageResponse<>(
                                 result.content().stream()
-                                                .map(u -> new UserReponse(
+                                                .map(u -> new UserResponse(
                                                                 u.id(),
                                                                 u.firstName(),
                                                                 u.lastName(),
@@ -120,7 +120,7 @@ public class UserController {
         }
 
         @GetMapping("/search/lastname")
-        public PageResponse<UserReponse> searchByLastName(
+        public PageResponse<UserResponse> searchByLastName(
                         @RequestParam String value,
                         @RequestParam(required = false, defaultValue = "ACTIVE") UserStatus status,
                         @RequestParam(defaultValue = "0") int page,
@@ -138,7 +138,7 @@ public class UserController {
 
                 return new PageResponse<>(
                                 result.content().stream()
-                                                .map(u -> new UserReponse(
+                                                .map(u -> new UserResponse(
                                                                 u.id(),
                                                                 u.firstName(),
                                                                 u.lastName(),
@@ -153,7 +153,7 @@ public class UserController {
         }
 
         @GetMapping
-        public PageResponse<UserReponse> searchUsers(
+        public PageResponse<UserResponse> searchUsers(
                         @RequestParam(required = false) String firstname,
                         @RequestParam(required = false) String lastname,
                         @RequestParam(required = false, defaultValue = "ACTIVE") UserStatus status,
@@ -192,7 +192,7 @@ public class UserController {
 
                 return new PageResponse<>(
                                 result.content().stream()
-                                                .map(u -> new UserReponse(
+                                                .map(u -> new UserResponse(
                                                                 u.id(),
                                                                 u.firstName(),
                                                                 u.lastName(),
