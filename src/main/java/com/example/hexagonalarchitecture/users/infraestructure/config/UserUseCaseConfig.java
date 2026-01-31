@@ -4,10 +4,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.example.hexagonalarchitecture.users.application.port.in.CreateUserUseCase;
+import com.example.hexagonalarchitecture.users.application.port.in.DeleteUserUseCase;
 import com.example.hexagonalarchitecture.users.application.port.in.GetUserByIdUseCase;
 import com.example.hexagonalarchitecture.users.application.port.in.GetUsersByFirstNameUseCase;
 import com.example.hexagonalarchitecture.users.application.port.in.GetUsersByLastNameUseCase;
 import com.example.hexagonalarchitecture.users.application.port.in.SearchUsersUseCase;
+import com.example.hexagonalarchitecture.users.application.port.in.UpdateUserUseCase;
 import com.example.hexagonalarchitecture.users.application.port.out.UserRepositoryPort;
 
 @Configuration
@@ -46,5 +48,19 @@ public class UserUseCaseConfig {
             UserRepositoryPort userRepositoryPort
     ) {
         return new SearchUsersUseCase(userRepositoryPort);
+    }
+
+    @Bean
+    public UpdateUserUseCase updateUserUseCase(
+            UserRepositoryPort userRepositoryPort
+    ) {
+        return new UpdateUserUseCase(userRepositoryPort);
+    }
+
+    @Bean
+    public DeleteUserUseCase deleteUserUseCase(
+            UserRepositoryPort userRepositoryPort
+    ) {
+        return new DeleteUserUseCase(userRepositoryPort);
     }
 }

@@ -10,6 +10,7 @@ import com.example.hexagonalarchitecture.users.domain.model.User;
 
 public interface UserRepositoryPort {
     User save(User user);
+    void deleteById(Long id);
     Optional<User> findById(Long id);
     PageResult<User> search(
         UserSearchFilter filter,

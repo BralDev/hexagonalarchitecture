@@ -7,10 +7,12 @@ import com.example.hexagonalarchitecture.users.application.common.SortDirection;
 import com.example.hexagonalarchitecture.users.application.common.UserSearchFilter;
 import com.example.hexagonalarchitecture.users.application.common.UserSortField;
 import com.example.hexagonalarchitecture.users.application.port.in.CreateUserUseCase;
+import com.example.hexagonalarchitecture.users.application.port.in.DeleteUserUseCase;
 import com.example.hexagonalarchitecture.users.application.port.in.GetUserByIdUseCase;
 import com.example.hexagonalarchitecture.users.application.port.in.GetUsersByFirstNameUseCase;
 import com.example.hexagonalarchitecture.users.application.port.in.GetUsersByLastNameUseCase;
 import com.example.hexagonalarchitecture.users.application.port.in.SearchUsersUseCase;
+import com.example.hexagonalarchitecture.users.application.port.in.UpdateUserUseCase;
 import com.example.hexagonalarchitecture.users.domain.model.User;
 import com.example.hexagonalarchitecture.users.domain.model.UserStatus;
 import com.example.hexagonalarchitecture.users.infraestructure.controller.dto.PageMeta;
@@ -24,6 +26,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,6 +41,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class UserController {
 
         private final CreateUserUseCase createUserUseCase;
+        private final UpdateUserUseCase updateUserUseCase;
+        private final DeleteUserUseCase deleteUserUseCase;
         private final GetUserByIdUseCase getUserUseCase;
         private final GetUsersByFirstNameUseCase getUsersByFirstNameUseCase;
         private final GetUsersByLastNameUseCase getUsersByLastNameUseCase;
@@ -44,11 +50,15 @@ public class UserController {
 
         public UserController(
                         CreateUserUseCase createUserUseCase,
+                        UpdateUserUseCase updateUserUseCase,
+                        DeleteUserUseCase deleteUserUseCase,
                         GetUserByIdUseCase getUserUseCase,
                         GetUsersByFirstNameUseCase getUsersByFirstNameUseCase,
                         GetUsersByLastNameUseCase getUsersByLastNameUseCase,
                         SearchUsersUseCase searchUsersUseCase) {
                 this.createUserUseCase = createUserUseCase;
+                this.updateUserUseCase = updateUserUseCase;
+                this.deleteUserUseCase = deleteUserUseCase;
                 this.getUserUseCase = getUserUseCase;
                 this.getUsersByFirstNameUseCase = getUsersByFirstNameUseCase;
                 this.getUsersByLastNameUseCase = getUsersByLastNameUseCase;
@@ -56,7 +66,7 @@ public class UserController {
         }
 
         @PostMapping
-        public UserResponse createUser(@RequestBody UserRequest userRequest) {
+        public UserResponse create(@RequestBody UserRequest userRequest) {
                 final User user = new User(
                                 null,
                                 userRequest.firstName(),
@@ -75,7 +85,7 @@ public class UserController {
         }
 
         @GetMapping("/{id}")
-        public UserResponse getUserById(@PathVariable Long id) {
+        public UserResponse getById(@PathVariable Long id) {
                 final User user = getUserUseCase.execute(id);
 
                 return new UserResponse(
@@ -84,6 +94,30 @@ public class UserController {
                                 user.lastName(),
                                 user.birthDate(),
                                 user.status());
+        }
+
+        @PutMapping("/{id}")
+        public UserResponse update(@PathVariable Long id, @RequestBody UserRequest userRequest) {
+                final User user = new User(
+                                null,
+                                userRequest.firstName(),
+                                userRequest.lastName(),
+                                userRequest.status(),
+                                userRequest.birthDate());
+
+                final User updatedUser = updateUserUseCase.execute(id, user);
+
+                return new UserResponse(
+                                updatedUser.id(),
+                                updatedUser.firstName(),
+                                updatedUser.lastName(),
+                                updatedUser.birthDate(),
+                                updatedUser.status());
+        }
+
+        @DeleteMapping("/{id}")
+        public void deleteById(@PathVariable Long id) {
+                deleteUserUseCase.execute(id);
         }
 
         @GetMapping("/search/firstname")
@@ -153,7 +187,7 @@ public class UserController {
         }
 
         @GetMapping
-        public PageResponse<UserResponse> searchUsers(
+        public PageResponse<UserResponse> search(
                         @RequestParam(required = false) String firstname,
                         @RequestParam(required = false) String lastname,
                         @RequestParam(required = false, defaultValue = "ACTIVE") UserStatus status,
