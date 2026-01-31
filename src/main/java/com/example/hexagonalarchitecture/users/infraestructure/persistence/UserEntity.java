@@ -46,24 +46,44 @@ public class UserEntity {
          this.birthDate = birthDate;
     }
 
-    public Long id() {
+    public Long getId() {
         return id;
     }
 
-    public String firstName() {
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getFirstName() {
         return firstName;
     }
 
-    public String lastName() {
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
         return lastName;
     }
 
-    public UserStatus status() {
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public UserStatus getStatus() {
         return status;
     }
 
-    public LocalDate birthDate() {
+    public void setStatus(UserStatus status) {
+        this.status = status;
+    }
+
+    public LocalDate getBirthDate() {
         return birthDate;
+    }
+
+    public void setBirthDate(LocalDate birthDate) {
+        this.birthDate = birthDate;
     }
 }
 

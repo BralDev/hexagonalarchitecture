@@ -36,11 +36,11 @@ public class JpaUserRepositoryAdapter implements UserRepositoryPort {
                                 user.birthDate());
                 final UserEntity savedUser = springDataUserRepository.save(userEntity);
                 return new User(
-                                savedUser.id(),
-                                savedUser.firstName(),
-                                savedUser.lastName(),
-                                savedUser.status(),
-                                savedUser.birthDate());
+                                savedUser.getId(),
+                                savedUser.getFirstName(),
+                                savedUser.getLastName(),
+                                savedUser.getStatus(),
+                                savedUser.getBirthDate());
         }
 
         @Override
@@ -48,11 +48,11 @@ public class JpaUserRepositoryAdapter implements UserRepositoryPort {
                 final UserEntity savedUser = springDataUserRepository.findById(id)
                                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
                 return Optional.of(new User(
-                                savedUser.id(),
-                                savedUser.firstName(),
-                                savedUser.lastName(),
-                                savedUser.status(),
-                                savedUser.birthDate()));
+                                savedUser.getId(),
+                                savedUser.getFirstName(),
+                                savedUser.getLastName(),
+                                savedUser.getStatus(),
+                                savedUser.getBirthDate()));
         }
 
         @Override
@@ -82,11 +82,11 @@ public class JpaUserRepositoryAdapter implements UserRepositoryPort {
 
                 List<User> users = result.getContent().stream()
                                 .map(e -> new User(
-                                                e.id(),
-                                                e.firstName(),
-                                                e.lastName(),
-                                                e.status(),
-                                                e.birthDate()))
+                                                e.getId(),
+                                                e.getFirstName(),
+                                                e.getLastName(),
+                                                e.getStatus(),
+                                                e.getBirthDate()))
                                 .toList();
 
                 return new PageResult<>(
