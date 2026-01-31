@@ -15,9 +15,10 @@ import com.example.hexagonalarchitecture.users.application.port.in.SearchUsersUs
 import com.example.hexagonalarchitecture.users.application.port.in.UpdateUserUseCase;
 import com.example.hexagonalarchitecture.users.domain.model.User;
 import com.example.hexagonalarchitecture.users.domain.model.UserStatus;
+import com.example.hexagonalarchitecture.users.infraestructure.controller.dto.CreateUserRequest;
 import com.example.hexagonalarchitecture.users.infraestructure.controller.dto.PageMeta;
 import com.example.hexagonalarchitecture.users.infraestructure.controller.dto.PageResponse;
-import com.example.hexagonalarchitecture.users.infraestructure.controller.dto.UserRequest;
+import com.example.hexagonalarchitecture.users.infraestructure.controller.dto.UpdateUserRequest;
 import com.example.hexagonalarchitecture.users.infraestructure.controller.dto.UserResponse;
 
 import java.time.LocalDate;
@@ -31,6 +32,8 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import jakarta.validation.Valid;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -66,14 +69,13 @@ public class UserController {
         }
 
         @PostMapping
-        public UserResponse create(@RequestBody UserRequest userRequest) {
-                final User user = new User(
-                                null,
-                                userRequest.firstName(),
-                                userRequest.lastName(),
-                                null,
-                                userRequest.birthDate());
-
+	public UserResponse create(@Valid @RequestBody CreateUserRequest request) {
+		final User user = new User(
+				null,
+				request.firstName(),
+				request.lastName(),
+				null,
+				request.birthDate());
                 final User userCreated = createUserUseCase.execute(user);
 
                 return new UserResponse(
@@ -97,14 +99,13 @@ public class UserController {
         }
 
         @PutMapping("/{id}")
-        public UserResponse update(@PathVariable Long id, @RequestBody UserRequest userRequest) {
-                final User user = new User(
-                                null,
-                                userRequest.firstName(),
-                                userRequest.lastName(),
-                                userRequest.status(),
-                                userRequest.birthDate());
-
+	public UserResponse update(@PathVariable Long id, @Valid @RequestBody UpdateUserRequest request) {
+		final User user = new User(
+				null,
+				request.firstName(),
+				request.lastName(),
+				request.status(),
+				request.birthDate());
                 final User updatedUser = updateUserUseCase.execute(id, user);
 
                 return new UserResponse(
