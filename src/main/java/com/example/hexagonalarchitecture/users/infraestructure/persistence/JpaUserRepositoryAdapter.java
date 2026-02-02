@@ -44,11 +44,6 @@ public class JpaUserRepositoryAdapter implements UserRepositoryPort {
         }
 
         @Override
-        public void deleteById(Long id) {
-                springDataUserRepository.deleteById(id);
-        }
-
-        @Override
         public Optional<User> findById(Long id) {
                 final UserEntity savedUser = springDataUserRepository.findById(id)
                                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
