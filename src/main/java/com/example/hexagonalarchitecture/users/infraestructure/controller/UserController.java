@@ -8,6 +8,7 @@ import com.example.hexagonalarchitecture.users.application.common.UserSearchFilt
 import com.example.hexagonalarchitecture.users.application.common.UserSortField;
 import com.example.hexagonalarchitecture.users.application.port.in.ActivateUserUseCase;
 import com.example.hexagonalarchitecture.users.application.port.in.CreateUserUseCase;
+import com.example.hexagonalarchitecture.users.application.port.in.DeactivateUserUseCase;
 import com.example.hexagonalarchitecture.users.application.port.in.DeleteUserUseCase;
 import com.example.hexagonalarchitecture.users.application.port.in.GetUserByIdUseCase;
 import com.example.hexagonalarchitecture.users.application.port.in.GetUsersByFirstNameUseCase;
@@ -48,6 +49,7 @@ public class UserController {
         private final UpdateUserUseCase updateUserUseCase;
         private final DeleteUserUseCase deleteUserUseCase;
 	private final ActivateUserUseCase activateUserUseCase;
+	private final DeactivateUserUseCase deactivateUserUseCase;
 	private final GetUserByIdUseCase getUserUseCase;
 	private final GetUsersByFirstNameUseCase getUsersByFirstNameUseCase;
 	private final GetUsersByLastNameUseCase getUsersByLastNameUseCase;
@@ -58,6 +60,7 @@ public class UserController {
 			UpdateUserUseCase updateUserUseCase,
 			DeleteUserUseCase deleteUserUseCase,
 			ActivateUserUseCase activateUserUseCase,
+			DeactivateUserUseCase deactivateUserUseCase,
 			GetUserByIdUseCase getUserUseCase,
 			GetUsersByFirstNameUseCase getUsersByFirstNameUseCase,
 			GetUsersByLastNameUseCase getUsersByLastNameUseCase,
@@ -66,6 +69,7 @@ public class UserController {
 		this.updateUserUseCase = updateUserUseCase;
 		this.deleteUserUseCase = deleteUserUseCase;
 		this.activateUserUseCase = activateUserUseCase;
+		this.deactivateUserUseCase = deactivateUserUseCase;
                 this.getUserUseCase = getUserUseCase;
                 this.getUsersByFirstNameUseCase = getUsersByFirstNameUseCase;
                 this.getUsersByLastNameUseCase = getUsersByLastNameUseCase;
@@ -135,6 +139,18 @@ public class UserController {
                                 activatedUser.lastName(),
                                 activatedUser.birthDate(),
                                 activatedUser.status());
+        }
+
+        @PostMapping("/{id}/deactivate")
+        public UserResponse deactivateById(@PathVariable Long id) {
+                final User deactivatedUser = deactivateUserUseCase.execute(id);
+
+                return new UserResponse(
+                                deactivatedUser.id(),
+                                deactivatedUser.firstName(),
+                                deactivatedUser.lastName(),
+                                deactivatedUser.birthDate(),
+                                deactivatedUser.status());
         }
 
         @GetMapping("/search/firstname")

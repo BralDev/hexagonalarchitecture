@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 
 import com.example.hexagonalarchitecture.users.application.port.in.ActivateUserUseCase;
 import com.example.hexagonalarchitecture.users.application.port.in.CreateUserUseCase;
+import com.example.hexagonalarchitecture.users.application.port.in.DeactivateUserUseCase;
 import com.example.hexagonalarchitecture.users.application.port.in.DeleteUserUseCase;
 import com.example.hexagonalarchitecture.users.application.port.in.GetUserByIdUseCase;
 import com.example.hexagonalarchitecture.users.application.port.in.GetUsersByFirstNameUseCase;
@@ -70,5 +71,12 @@ public class UserUseCaseConfig {
             UserRepositoryPort userRepositoryPort
     ) {
         return new ActivateUserUseCase(userRepositoryPort);
+    }
+
+    @Bean
+    public DeactivateUserUseCase deactivateUserUseCase(
+            UserRepositoryPort userRepositoryPort
+    ) {
+        return new DeactivateUserUseCase(userRepositoryPort);
     }
 }
