@@ -6,6 +6,7 @@ import com.example.hexagonalarchitecture.users.application.common.PageResult;
 import com.example.hexagonalarchitecture.users.application.common.SortDirection;
 import com.example.hexagonalarchitecture.users.application.common.UserSearchFilter;
 import com.example.hexagonalarchitecture.users.application.common.UserSortField;
+import com.example.hexagonalarchitecture.users.application.port.in.ActivateUserUseCase;
 import com.example.hexagonalarchitecture.users.application.port.in.CreateUserUseCase;
 import com.example.hexagonalarchitecture.users.application.port.in.DeleteUserUseCase;
 import com.example.hexagonalarchitecture.users.application.port.in.GetUserByIdUseCase;
@@ -46,22 +47,25 @@ public class UserController {
         private final CreateUserUseCase createUserUseCase;
         private final UpdateUserUseCase updateUserUseCase;
         private final DeleteUserUseCase deleteUserUseCase;
-        private final GetUserByIdUseCase getUserUseCase;
-        private final GetUsersByFirstNameUseCase getUsersByFirstNameUseCase;
-        private final GetUsersByLastNameUseCase getUsersByLastNameUseCase;
-        private final SearchUsersUseCase searchUsersUseCase;
+	private final ActivateUserUseCase activateUserUseCase;
+	private final GetUserByIdUseCase getUserUseCase;
+	private final GetUsersByFirstNameUseCase getUsersByFirstNameUseCase;
+	private final GetUsersByLastNameUseCase getUsersByLastNameUseCase;
+	private final SearchUsersUseCase searchUsersUseCase;
 
-        public UserController(
-                        CreateUserUseCase createUserUseCase,
-                        UpdateUserUseCase updateUserUseCase,
-                        DeleteUserUseCase deleteUserUseCase,
-                        GetUserByIdUseCase getUserUseCase,
-                        GetUsersByFirstNameUseCase getUsersByFirstNameUseCase,
-                        GetUsersByLastNameUseCase getUsersByLastNameUseCase,
-                        SearchUsersUseCase searchUsersUseCase) {
-                this.createUserUseCase = createUserUseCase;
-                this.updateUserUseCase = updateUserUseCase;
-                this.deleteUserUseCase = deleteUserUseCase;
+	public UserController(
+			CreateUserUseCase createUserUseCase,
+			UpdateUserUseCase updateUserUseCase,
+			DeleteUserUseCase deleteUserUseCase,
+			ActivateUserUseCase activateUserUseCase,
+			GetUserByIdUseCase getUserUseCase,
+			GetUsersByFirstNameUseCase getUsersByFirstNameUseCase,
+			GetUsersByLastNameUseCase getUsersByLastNameUseCase,
+			SearchUsersUseCase searchUsersUseCase) {
+		this.createUserUseCase = createUserUseCase;
+		this.updateUserUseCase = updateUserUseCase;
+		this.deleteUserUseCase = deleteUserUseCase;
+		this.activateUserUseCase = activateUserUseCase;
                 this.getUserUseCase = getUserUseCase;
                 this.getUsersByFirstNameUseCase = getUsersByFirstNameUseCase;
                 this.getUsersByLastNameUseCase = getUsersByLastNameUseCase;
@@ -119,6 +123,18 @@ public class UserController {
         @DeleteMapping("/{id}")
         public void deleteById(@PathVariable Long id) {
                 deleteUserUseCase.execute(id);
+        }
+
+        @PostMapping("/{id}/activate")
+        public UserResponse activateById(@PathVariable Long id) {
+                final User activatedUser = activateUserUseCase.execute(id);
+
+                return new UserResponse(
+                                activatedUser.id(),
+                                activatedUser.firstName(),
+                                activatedUser.lastName(),
+                                activatedUser.birthDate(),
+                                activatedUser.status());
         }
 
         @GetMapping("/search/firstname")

@@ -3,6 +3,7 @@ package com.example.hexagonalarchitecture.users.infraestructure.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.example.hexagonalarchitecture.users.application.port.in.ActivateUserUseCase;
 import com.example.hexagonalarchitecture.users.application.port.in.CreateUserUseCase;
 import com.example.hexagonalarchitecture.users.application.port.in.DeleteUserUseCase;
 import com.example.hexagonalarchitecture.users.application.port.in.GetUserByIdUseCase;
@@ -62,5 +63,12 @@ public class UserUseCaseConfig {
             UserRepositoryPort userRepositoryPort
     ) {
         return new DeleteUserUseCase(userRepositoryPort);
+    }
+
+    @Bean
+    public ActivateUserUseCase activateUserUseCase(
+            UserRepositoryPort userRepositoryPort
+    ) {
+        return new ActivateUserUseCase(userRepositoryPort);
     }
 }
