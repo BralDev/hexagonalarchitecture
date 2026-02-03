@@ -6,8 +6,13 @@ import com.example.hexagonalarchitecture.users.domain.model.UserStatus;
 
 public record UserResponse(
     Long id,
+    String username,
     String firstName,
     String lastName,
+    String email,
+    String phone,
+    String document,
+    String address,
     LocalDate birthDate,
     UserStatus status
 ){

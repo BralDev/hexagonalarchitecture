@@ -2,6 +2,8 @@ package com.example.hexagonalarchitecture.users.infraestructure.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.example.hexagonalarchitecture.users.application.port.in.ActivateUserUseCase;
 import com.example.hexagonalarchitecture.users.application.port.in.CreateUserUseCase;
@@ -19,9 +21,10 @@ public class UserUseCaseConfig {
 
     @Bean
     public CreateUserUseCase createUserUseCase(
-            UserRepositoryPort userRepositoryPort
+            UserRepositoryPort userRepositoryPort,
+            PasswordEncoder passwordEncoder
     ) {
-        return new CreateUserUseCase(userRepositoryPort);
+        return new CreateUserUseCase(userRepositoryPort, passwordEncoder);
     }
 
     @Bean
@@ -78,5 +81,10 @@ public class UserUseCaseConfig {
             UserRepositoryPort userRepositoryPort
     ) {
         return new DeactivateUserUseCase(userRepositoryPort);
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }

@@ -15,6 +15,7 @@ import com.example.hexagonalarchitecture.users.application.common.SortDirection;
 import com.example.hexagonalarchitecture.users.application.common.UserSearchFilter;
 import com.example.hexagonalarchitecture.users.application.common.UserSortField;
 import com.example.hexagonalarchitecture.users.application.port.out.UserRepositoryPort;
+import com.example.hexagonalarchitecture.users.application.port.out.UserWithPassword;
 import com.example.hexagonalarchitecture.users.domain.model.User;
 
 @Repository
@@ -27,32 +28,60 @@ public class JpaUserRepositoryAdapter implements UserRepositoryPort {
         }
 
         @Override
-        public User save(User user) {
-                UserEntity userEntity = new UserEntity(
-                                user.id(),
-                                user.firstName(),
-                                user.lastName(),
-                                user.status(),
-                                user.birthDate());
-                final UserEntity savedUser = springDataUserRepository.save(userEntity);
-                return new User(
-                                savedUser.getId(),
-                                savedUser.getFirstName(),
-                                savedUser.getLastName(),
-                                savedUser.getStatus(),
-                                savedUser.getBirthDate());
+        public User create(User user, String hashedPassword) {
+                return saveUser(user, hashedPassword);
+        }
+
+        @Override
+        public User update(User user, String passwordHash) {
+                return saveUser(user, passwordHash);
         }
 
         @Override
         public Optional<User> findById(Long id) {
-                final UserEntity savedUser = springDataUserRepository.findById(id)
+                final UserEntity userEntity = springDataUserRepository.findById(id)
                                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
-                return Optional.of(new User(
-                                savedUser.getId(),
-                                savedUser.getFirstName(),
-                                savedUser.getLastName(),
-                                savedUser.getStatus(),
-                                savedUser.getBirthDate()));
+                return Optional.of(userEntityToDomain(userEntity));
+        }
+
+        @Override
+        public UserWithPassword findByIdWithPassword(Long id) {
+                final UserEntity userEntity = springDataUserRepository.findById(id)
+                                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                return new UserWithPassword(
+                                userEntityToDomain(userEntity),
+                                userEntity.getPassword());
+        }
+
+        private User userEntityToDomain(UserEntity entity) {
+                return new User(
+                                entity.getId(),
+                                entity.getUsername(),
+                                entity.getFirstName(),
+                                entity.getLastName(),
+                                entity.getEmail(),
+                                entity.getPhone(),
+                                entity.getDocument(),
+                                entity.getAddress(),
+                                entity.getStatus(),
+                                entity.getBirthDate());
+        }
+
+        private User saveUser(User user, String passwordHash) {
+                UserEntity userEntity = new UserEntity(
+                                user.id(),
+                                user.username(),
+                                passwordHash,
+                                user.firstName(),
+                                user.lastName(),
+                                user.email(),
+                                user.phone(),
+                                user.document(),
+                                user.address(),
+                                user.status(),
+                                user.birthDate());
+                final UserEntity savedUser = springDataUserRepository.save(userEntity);
+                return userEntityToDomain(savedUser);
         }
 
         @Override
@@ -81,12 +110,7 @@ public class JpaUserRepositoryAdapter implements UserRepositoryPort {
                 Page<UserEntity> result = springDataUserRepository.findAll(spec, pageable);
 
                 List<User> users = result.getContent().stream()
-                                .map(e -> new User(
-                                                e.getId(),
-                                                e.getFirstName(),
-                                                e.getLastName(),
-                                                e.getStatus(),
-                                                e.getBirthDate()))
+                                .map(this::userEntityToDomain)
                                 .toList();
 
                 return new PageResult<>(

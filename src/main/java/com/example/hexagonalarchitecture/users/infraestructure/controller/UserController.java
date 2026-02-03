@@ -80,16 +80,26 @@ public class UserController {
 	public UserResponse create(@Valid @RequestBody CreateUserRequest request) {
 		final User user = new User(
 				null,
+                                request.username(),
 				request.firstName(),
 				request.lastName(),
+                                request.email(),
+                                request.phone(),
+                                request.document(),
+                                request.address(),
 				null,
 				request.birthDate());
-                final User userCreated = createUserUseCase.execute(user);
+                final User userCreated = createUserUseCase.execute(user, request.password());
 
                 return new UserResponse(
                                 userCreated.id(),
+                                userCreated.username(),
                                 userCreated.firstName(),
                                 userCreated.lastName(),
+                                userCreated.email(),
+                                userCreated.phone(),
+                                userCreated.document(),
+                                userCreated.address(),
                                 userCreated.birthDate(),
                                 userCreated.status());
         }
@@ -100,8 +110,13 @@ public class UserController {
 
                 return new UserResponse(
                                 user.id(),
+                                user.username(),
                                 user.firstName(),
                                 user.lastName(),
+                                user.email(),
+                                user.phone(),
+                                user.document(),
+                                user.address(),
                                 user.birthDate(),
                                 user.status());
         }
@@ -110,16 +125,26 @@ public class UserController {
 	public UserResponse update(@PathVariable Long id, @Valid @RequestBody UpdateUserRequest request) {
 		final User user = new User(
 				null,
+                                request.username(),
 				request.firstName(),
 				request.lastName(),
+                                request.email(),
+                                request.phone(),
+                                request.document(),
+                                request.address(),
 				request.status(),
 				request.birthDate());
                 final User updatedUser = updateUserUseCase.execute(id, user);
 
                 return new UserResponse(
                                 updatedUser.id(),
+                                updatedUser.username(),
                                 updatedUser.firstName(),
                                 updatedUser.lastName(),
+                                updatedUser.email(),
+                                updatedUser.phone(),
+                                updatedUser.document(),
+                                updatedUser.address(),
                                 updatedUser.birthDate(),
                                 updatedUser.status());
         }
@@ -135,8 +160,13 @@ public class UserController {
 
                 return new UserResponse(
                                 activatedUser.id(),
+                                activatedUser.username(),
                                 activatedUser.firstName(),
                                 activatedUser.lastName(),
+                                activatedUser.email(),
+                                activatedUser.phone(),
+                                activatedUser.document(),
+                                activatedUser.address(),
                                 activatedUser.birthDate(),
                                 activatedUser.status());
         }
@@ -147,8 +177,13 @@ public class UserController {
 
                 return new UserResponse(
                                 deactivatedUser.id(),
+                                deactivatedUser.username(),
                                 deactivatedUser.firstName(),
                                 deactivatedUser.lastName(),
+                                deactivatedUser.email(),
+                                deactivatedUser.phone(),
+                                deactivatedUser.document(),
+                                deactivatedUser.address(),
                                 deactivatedUser.birthDate(),
                                 deactivatedUser.status());
         }
@@ -174,8 +209,13 @@ public class UserController {
                                 result.content().stream()
                                                 .map(u -> new UserResponse(
                                                                 u.id(),
+                                                                u.username(),
                                                                 u.firstName(),
                                                                 u.lastName(),
+                                                                u.email(),
+                                                                u.phone(),
+                                                                u.document(),
+                                                                u.address(),
                                                                 u.birthDate(),
                                                                 u.status()))
                                                 .toList(),
@@ -207,8 +247,13 @@ public class UserController {
                                 result.content().stream()
                                                 .map(u -> new UserResponse(
                                                                 u.id(),
+                                                                u.username(),
                                                                 u.firstName(),
                                                                 u.lastName(),
+                                                                u.email(),
+                                                                u.phone(),
+                                                                u.document(),
+                                                                u.address(),
                                                                 u.birthDate(),
                                                                 u.status()))
                                                 .toList(),
@@ -261,8 +306,13 @@ public class UserController {
                                 result.content().stream()
                                                 .map(u -> new UserResponse(
                                                                 u.id(),
+                                                                u.username(),
                                                                 u.firstName(),
                                                                 u.lastName(),
+                                                                u.email(),
+                                                                u.phone(),
+                                                                u.document(),
+                                                                u.address(),
                                                                 u.birthDate(),
                                                                 u.status()))
                                                 .toList(),

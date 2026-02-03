@@ -9,8 +9,10 @@ import com.example.hexagonalarchitecture.users.application.common.UserSortField;
 import com.example.hexagonalarchitecture.users.domain.model.User;
 
 public interface UserRepositoryPort {
-    User save(User user);
+    User create(User user, String hashedPassword);
+    User update(User user, String passwordHash);
     Optional<User> findById(Long id);
+    UserWithPassword findByIdWithPassword(Long id);
     PageResult<User> search(
         UserSearchFilter filter,
         int page,
