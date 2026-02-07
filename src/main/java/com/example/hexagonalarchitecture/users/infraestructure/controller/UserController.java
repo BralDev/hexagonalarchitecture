@@ -1,5 +1,8 @@
 package com.example.hexagonalarchitecture.users.infraestructure.controller;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.hexagonalarchitecture.users.application.common.PageResult;
@@ -25,6 +28,7 @@ import com.example.hexagonalarchitecture.users.infraestructure.controller.dto.Pa
 import com.example.hexagonalarchitecture.users.infraestructure.controller.dto.UpdateUserRequest;
 import com.example.hexagonalarchitecture.users.infraestructure.controller.dto.UserResponse;
 
+import java.net.URI;
 import java.time.LocalDate;
 
 import org.springframework.format.annotation.DateTimeFormat;
@@ -82,7 +86,7 @@ public class UserController {
         }
 
         @PostMapping
-	public UserResponse create(@Valid @RequestBody CreateUserRequest request) {
+	public ResponseEntity<UserResponse> create(@Valid @RequestBody CreateUserRequest request) {
 		final User user = new User(
 				null,
                                 request.username(),
@@ -96,7 +100,7 @@ public class UserController {
 				request.birthDate());
                 final User userCreated = createUserUseCase.execute(user, request.password());
 
-                return new UserResponse(
+                UserResponse response = new UserResponse(
                                 userCreated.id(),
                                 userCreated.username(),
                                 userCreated.firstName(),
@@ -107,6 +111,10 @@ public class UserController {
                                 userCreated.address(),
                                 userCreated.birthDate(),
                                 userCreated.status());
+                
+                return ResponseEntity
+                                .created(URI.create("/users/" + userCreated.id()))
+                                .body(response);
         }
 
         @GetMapping("/{id}")
@@ -155,6 +163,7 @@ public class UserController {
         }
 
         @DeleteMapping("/{id}")
+        @ResponseStatus(HttpStatus.NO_CONTENT)
         public void deleteById(@PathVariable Long id) {
                 deleteUserUseCase.execute(id);
         }
@@ -194,24 +203,13 @@ public class UserController {
         }
 
         @PostMapping("/{id}/password")
-        public UserResponse changePassword(@PathVariable Long id, @Valid @RequestBody ChangePasswordRequest request) {
-                final User updatedUser = changePasswordUseCase.execute(
+        @ResponseStatus(HttpStatus.NO_CONTENT)
+        public void changePassword(@PathVariable Long id, @Valid @RequestBody ChangePasswordRequest request) {
+                changePasswordUseCase.execute(
                                 id,
                                 request.currentPassword(),
                                 request.newPassword(),
                                 request.confirmPassword());
-
-                return new UserResponse(
-                                updatedUser.id(),
-                                updatedUser.username(),
-                                updatedUser.firstName(),
-                                updatedUser.lastName(),
-                                updatedUser.email(),
-                                updatedUser.phone(),
-                                updatedUser.document(),
-                                updatedUser.address(),
-                                updatedUser.birthDate(),
-                                updatedUser.status());
         }
 
         @GetMapping("/search/firstname")
