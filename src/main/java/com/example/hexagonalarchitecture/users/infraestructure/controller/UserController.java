@@ -7,6 +7,7 @@ import com.example.hexagonalarchitecture.users.application.common.SortDirection;
 import com.example.hexagonalarchitecture.users.application.common.UserSearchFilter;
 import com.example.hexagonalarchitecture.users.application.common.UserSortField;
 import com.example.hexagonalarchitecture.users.application.port.in.ActivateUserUseCase;
+import com.example.hexagonalarchitecture.users.application.port.in.ChangePasswordUseCase;
 import com.example.hexagonalarchitecture.users.application.port.in.CreateUserUseCase;
 import com.example.hexagonalarchitecture.users.application.port.in.DeactivateUserUseCase;
 import com.example.hexagonalarchitecture.users.application.port.in.DeleteUserUseCase;
@@ -18,6 +19,7 @@ import com.example.hexagonalarchitecture.users.application.port.in.UpdateUserUse
 import com.example.hexagonalarchitecture.users.domain.model.User;
 import com.example.hexagonalarchitecture.users.domain.model.UserStatus;
 import com.example.hexagonalarchitecture.users.infraestructure.controller.dto.CreateUserRequest;
+import com.example.hexagonalarchitecture.users.infraestructure.controller.dto.ChangePasswordRequest;
 import com.example.hexagonalarchitecture.users.infraestructure.controller.dto.PageMeta;
 import com.example.hexagonalarchitecture.users.infraestructure.controller.dto.PageResponse;
 import com.example.hexagonalarchitecture.users.infraestructure.controller.dto.UpdateUserRequest;
@@ -50,6 +52,7 @@ public class UserController {
         private final DeleteUserUseCase deleteUserUseCase;
 	private final ActivateUserUseCase activateUserUseCase;
 	private final DeactivateUserUseCase deactivateUserUseCase;
+        private final ChangePasswordUseCase changePasswordUseCase;
 	private final GetUserByIdUseCase getUserUseCase;
 	private final GetUsersByFirstNameUseCase getUsersByFirstNameUseCase;
 	private final GetUsersByLastNameUseCase getUsersByLastNameUseCase;
@@ -61,6 +64,7 @@ public class UserController {
 			DeleteUserUseCase deleteUserUseCase,
 			ActivateUserUseCase activateUserUseCase,
 			DeactivateUserUseCase deactivateUserUseCase,
+                        ChangePasswordUseCase changePasswordUseCase,
 			GetUserByIdUseCase getUserUseCase,
 			GetUsersByFirstNameUseCase getUsersByFirstNameUseCase,
 			GetUsersByLastNameUseCase getUsersByLastNameUseCase,
@@ -70,6 +74,7 @@ public class UserController {
 		this.deleteUserUseCase = deleteUserUseCase;
 		this.activateUserUseCase = activateUserUseCase;
 		this.deactivateUserUseCase = deactivateUserUseCase;
+                this.changePasswordUseCase = changePasswordUseCase;
                 this.getUserUseCase = getUserUseCase;
                 this.getUsersByFirstNameUseCase = getUsersByFirstNameUseCase;
                 this.getUsersByLastNameUseCase = getUsersByLastNameUseCase;
@@ -186,6 +191,23 @@ public class UserController {
                                 deactivatedUser.address(),
                                 deactivatedUser.birthDate(),
                                 deactivatedUser.status());
+        }
+
+        @PostMapping("/{id}/password")
+        public UserResponse changePassword(@PathVariable Long id, @Valid @RequestBody ChangePasswordRequest request) {
+                final User updatedUser = changePasswordUseCase.execute(id, request.password());
+
+                return new UserResponse(
+                                updatedUser.id(),
+                                updatedUser.username(),
+                                updatedUser.firstName(),
+                                updatedUser.lastName(),
+                                updatedUser.email(),
+                                updatedUser.phone(),
+                                updatedUser.document(),
+                                updatedUser.address(),
+                                updatedUser.birthDate(),
+                                updatedUser.status());
         }
 
         @GetMapping("/search/firstname")

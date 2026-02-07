@@ -6,6 +6,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.example.hexagonalarchitecture.users.application.port.in.ActivateUserUseCase;
+import com.example.hexagonalarchitecture.users.application.port.in.ChangePasswordUseCase;
 import com.example.hexagonalarchitecture.users.application.port.in.CreateUserUseCase;
 import com.example.hexagonalarchitecture.users.application.port.in.DeactivateUserUseCase;
 import com.example.hexagonalarchitecture.users.application.port.in.DeleteUserUseCase;
@@ -81,6 +82,14 @@ public class UserUseCaseConfig {
             UserRepositoryPort userRepositoryPort
     ) {
         return new DeactivateUserUseCase(userRepositoryPort);
+    }
+
+    @Bean
+    public ChangePasswordUseCase changePasswordUseCase(
+            UserRepositoryPort userRepositoryPort,
+            PasswordEncoder passwordEncoder
+    ) {
+        return new ChangePasswordUseCase(userRepositoryPort, passwordEncoder);
     }
 
     @Bean
