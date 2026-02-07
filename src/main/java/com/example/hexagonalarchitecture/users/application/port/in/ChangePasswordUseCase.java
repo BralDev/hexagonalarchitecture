@@ -3,6 +3,7 @@ package com.example.hexagonalarchitecture.users.application.port.in;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.example.hexagonalarchitecture.users.application.port.out.UserRepositoryPort;
+import com.example.hexagonalarchitecture.users.application.port.out.UserWithPassword;
 import com.example.hexagonalarchitecture.users.domain.model.User;
 
 public class ChangePasswordUseCase {
@@ -15,9 +16,17 @@ public class ChangePasswordUseCase {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User execute(Long id, String newPassword) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + id));
+    public User execute(Long id, String currentPassword, String newPassword, String confirmPassword) {
+        UserWithPassword existing = userRepository.findByIdWithPassword(id);
+        User user = existing.user();
+
+        if (!passwordEncoder.matches(currentPassword, existing.passwordHash())) {
+            throw new IllegalArgumentException("Current password is incorrect");
+        }
+
+        if (!newPassword.equals(confirmPassword)) {
+            throw new IllegalArgumentException("New password and confirm password do not match");
+        }
 
         String hashedPassword = passwordEncoder.encode(newPassword);
 

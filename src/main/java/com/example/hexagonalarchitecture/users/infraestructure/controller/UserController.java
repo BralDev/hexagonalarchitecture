@@ -195,7 +195,11 @@ public class UserController {
 
         @PostMapping("/{id}/password")
         public UserResponse changePassword(@PathVariable Long id, @Valid @RequestBody ChangePasswordRequest request) {
-                final User updatedUser = changePasswordUseCase.execute(id, request.password());
+                final User updatedUser = changePasswordUseCase.execute(
+                                id,
+                                request.currentPassword(),
+                                request.newPassword(),
+                                request.confirmPassword());
 
                 return new UserResponse(
                                 updatedUser.id(),
