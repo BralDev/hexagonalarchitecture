@@ -16,16 +16,17 @@ public class DeactivateUserUseCase {
     public User execute(Long id) {
         UserWithPassword existing = userRepository.findByIdWithPassword(id);
         User user = existing.user();
-        
+
         User deactivatedUser = new User(
                 user.id(),
-            user.username(),
+                user.username(),
                 user.firstName(),
                 user.lastName(),
-            user.email(),
-            user.phone(),
-            user.document(),
-            user.address(),
+                user.email(),
+                user.phone(),
+                user.documentType(),
+                user.documentNumber(),
+                user.address(),
                 UserStatus.INACTIVE,
                 user.birthDate());
         return userRepository.update(deactivatedUser, existing.passwordHash());

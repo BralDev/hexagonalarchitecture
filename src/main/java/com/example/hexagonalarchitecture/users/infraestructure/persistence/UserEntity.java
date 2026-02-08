@@ -2,6 +2,7 @@ package com.example.hexagonalarchitecture.users.infraestructure.persistence;
 
 import java.time.LocalDate;
 
+import com.example.hexagonalarchitecture.users.domain.model.DocumentType;
 import com.example.hexagonalarchitecture.users.domain.model.UserStatus;
 
 import jakarta.persistence.Column;
@@ -39,8 +40,12 @@ public class UserEntity {
     @Column(name = "phone", nullable = true)
     private String phone;
 
-    @Column(name = "document", nullable = true, unique = true)
-    private String document;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "document_type", nullable = true)
+    private DocumentType documentType;
+
+    @Column(name = "document_number", nullable = true, unique = true)
+    private String documentNumber;
 
     @Column(name = "address", nullable = true)
     private String address;
@@ -57,7 +62,7 @@ public class UserEntity {
     }
 
     public UserEntity(Long id, String username, String password, String firstName, String lastName,
-                      String email, String phone, String document, String address,
+                      String email, String phone, DocumentType documentType, String documentNumber, String address,
                       UserStatus status, LocalDate birthDate) {
         this.id = id;
         this.username = username;
@@ -66,7 +71,8 @@ public class UserEntity {
         this.lastName = lastName;
         this.email = email;
         this.phone = phone;
-        this.document = document;
+        this.documentType = documentType;
+        this.documentNumber = documentNumber;
         this.address = address;
         this.status = status;
         this.birthDate = birthDate;
@@ -128,12 +134,20 @@ public class UserEntity {
         this.phone = phone;
     }
 
-    public String getDocument() {
-        return document;
+    public DocumentType getDocumentType() {
+        return documentType;
     }
 
-    public void setDocument(String document) {
-        this.document = document;
+    public void setDocumentType(DocumentType documentType) {
+        this.documentType = documentType;
+    }
+
+    public String getDocumentNumber() {
+        return documentNumber;
+    }
+
+    public void setDocumentNumber(String documentNumber) {
+        this.documentNumber = documentNumber;
     }
 
     public String getAddress() {
@@ -160,4 +174,3 @@ public class UserEntity {
         this.birthDate = birthDate;
     }
 }
-

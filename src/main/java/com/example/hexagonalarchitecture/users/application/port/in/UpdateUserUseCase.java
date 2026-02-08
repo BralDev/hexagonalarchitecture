@@ -12,21 +12,21 @@ public class UpdateUserUseCase {
         this.userRepository = userRepository;
     }
 
-    public User execute(Long id, User user) {        
+    public User execute(Long id, User user) {
         UserWithPassword existing = userRepository.findByIdWithPassword(id);
-        
+
         User toUpdate = new User(
-            id,
-            user.username(),
-            user.firstName(),
-            user.lastName(),
-            user.email(),
-            user.phone(),
-            user.document(),
-            user.address(),
-            user.status(),
-            user.birthDate()
-        );
+                id,
+                user.username(),
+                user.firstName(),
+                user.lastName(),
+                user.email(),
+                user.phone(),
+                user.documentType(),
+                user.documentNumber(),
+                user.address(),
+                user.status(),
+                user.birthDate());
         return userRepository.update(toUpdate, existing.passwordHash());
     }
 }

@@ -24,11 +24,11 @@ public class CreateUserUseCase {
                 user.lastName(),
                 user.email(),
                 user.phone(),
-                user.document(),
+                user.documentType(),
+                user.documentNumber(),
                 user.address(),
                 user.status() == null ? UserStatus.ACTIVE : user.status(),
-                user.birthDate()
-            );
+                user.birthDate());
         return userRepository.create(toCreate, hashedPassword);
     }
 }

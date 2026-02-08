@@ -2,6 +2,7 @@ package com.example.hexagonalarchitecture.users.infraestructure.controller.dto;
 
 import java.time.LocalDate;
 
+import com.example.hexagonalarchitecture.users.domain.model.DocumentType;
 import com.example.hexagonalarchitecture.users.domain.model.UserStatus;
 
 public record UserResponse(
@@ -11,7 +12,8 @@ public record UserResponse(
     String lastName,
     String email,
     String phone,
-    String document,
+    DocumentType documentType,
+    String documentNumber,
     String address,
     LocalDate birthDate,
     UserStatus status

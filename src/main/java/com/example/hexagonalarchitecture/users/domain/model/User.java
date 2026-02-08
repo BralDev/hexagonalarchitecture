@@ -9,7 +9,8 @@ public record User(
     String lastName,
     String email,
     String phone,
-    String document,
+    DocumentType documentType,
+    String documentNumber,
     String address,
     UserStatus status,
     LocalDate birthDate

@@ -16,19 +16,19 @@ public class DeleteUserUseCase {
     public void execute(Long id) {
         UserWithPassword existing = userRepository.findByIdWithPassword(id);
         User user = existing.user();
-        
+
         User deletedUser = new User(
-            user.id(),
-            user.username(),
-            user.firstName(),
-            user.lastName(),
-            user.email(),
-            user.phone(),
-            user.document(),
-            user.address(),
-            UserStatus.DELETED,
-            user.birthDate()
-        );
+                user.id(),
+                user.username(),
+                user.firstName(),
+                user.lastName(),
+                user.email(),
+                user.phone(),
+                user.documentType(),
+                user.documentNumber(),
+                user.address(),
+                UserStatus.DELETED,
+                user.birthDate());
         userRepository.update(deletedUser, existing.passwordHash());
     }
 }

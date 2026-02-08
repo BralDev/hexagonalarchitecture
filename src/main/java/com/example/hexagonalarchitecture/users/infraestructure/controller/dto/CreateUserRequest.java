@@ -2,8 +2,11 @@ package com.example.hexagonalarchitecture.users.infraestructure.controller.dto;
 
 import java.time.LocalDate;
 
+import com.example.hexagonalarchitecture.users.domain.model.DocumentType;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record CreateUserRequest(
@@ -20,7 +23,10 @@ public record CreateUserRequest(
     @Email(message = "email debe ser válido")
     String email,
     String phone,
-    String document,
+    @NotNull(message = "documentType es obligatorio")
+    DocumentType documentType,
+    @NotBlank(message = "documentNumber es obligatorio")
+    String documentNumber,
     String address,
     LocalDate birthDate
 ){

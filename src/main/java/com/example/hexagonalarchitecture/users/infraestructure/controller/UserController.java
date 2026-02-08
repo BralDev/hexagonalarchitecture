@@ -94,7 +94,8 @@ public class UserController {
 				request.lastName(),
                                 request.email(),
                                 request.phone(),
-                                request.document(),
+                                request.documentType(),
+                                request.documentNumber(),
                                 request.address(),
 				null,
 				request.birthDate());
@@ -107,7 +108,8 @@ public class UserController {
                                 userCreated.lastName(),
                                 userCreated.email(),
                                 userCreated.phone(),
-                                userCreated.document(),
+                                userCreated.documentType(),
+                                userCreated.documentNumber(),
                                 userCreated.address(),
                                 userCreated.birthDate(),
                                 userCreated.status());
@@ -128,7 +130,8 @@ public class UserController {
                                 user.lastName(),
                                 user.email(),
                                 user.phone(),
-                                user.document(),
+                                user.documentType(),
+                                user.documentNumber(),
                                 user.address(),
                                 user.birthDate(),
                                 user.status());
@@ -136,6 +139,8 @@ public class UserController {
 
         @PutMapping("/{id}")
 	public UserResponse update(@PathVariable Long id, @Valid @RequestBody UpdateUserRequest request) {
+		final User existingUser = getUserUseCase.execute(id);
+			
 		final User user = new User(
 				null,
                                 request.username(),
@@ -143,7 +148,8 @@ public class UserController {
 				request.lastName(),
                                 request.email(),
                                 request.phone(),
-                                request.document(),
+                                existingUser.documentType(),    
+                                existingUser.documentNumber(),
                                 request.address(),
 				request.status(),
 				request.birthDate());
@@ -156,7 +162,8 @@ public class UserController {
                                 updatedUser.lastName(),
                                 updatedUser.email(),
                                 updatedUser.phone(),
-                                updatedUser.document(),
+                                updatedUser.documentType(),
+                                updatedUser.documentNumber(),
                                 updatedUser.address(),
                                 updatedUser.birthDate(),
                                 updatedUser.status());
@@ -179,7 +186,8 @@ public class UserController {
                                 activatedUser.lastName(),
                                 activatedUser.email(),
                                 activatedUser.phone(),
-                                activatedUser.document(),
+                                activatedUser.documentType(),
+                                activatedUser.documentNumber(),
                                 activatedUser.address(),
                                 activatedUser.birthDate(),
                                 activatedUser.status());
@@ -196,7 +204,8 @@ public class UserController {
                                 deactivatedUser.lastName(),
                                 deactivatedUser.email(),
                                 deactivatedUser.phone(),
-                                deactivatedUser.document(),
+                                deactivatedUser.documentType(),
+                                deactivatedUser.documentNumber(),
                                 deactivatedUser.address(),
                                 deactivatedUser.birthDate(),
                                 deactivatedUser.status());
@@ -238,7 +247,8 @@ public class UserController {
                                                                 u.lastName(),
                                                                 u.email(),
                                                                 u.phone(),
-                                                                u.document(),
+                                                                u.documentType(),
+                                                                u.documentNumber(),
                                                                 u.address(),
                                                                 u.birthDate(),
                                                                 u.status()))
@@ -276,7 +286,8 @@ public class UserController {
                                                                 u.lastName(),
                                                                 u.email(),
                                                                 u.phone(),
-                                                                u.document(),
+                                                                u.documentType(),
+                                                                u.documentNumber(),
                                                                 u.address(),
                                                                 u.birthDate(),
                                                                 u.status()))
@@ -335,7 +346,8 @@ public class UserController {
                                                                 u.lastName(),
                                                                 u.email(),
                                                                 u.phone(),
-                                                                u.document(),
+                                                                u.documentType(),
+                                                                u.documentNumber(),
                                                                 u.address(),
                                                                 u.birthDate(),
                                                                 u.status()))

@@ -22,7 +22,6 @@ public record UpdateUserRequest(
     @Email(message = "email debe ser válido")
     String email,
     String phone,
-    String document,
     String address,
     LocalDate birthDate
 ){

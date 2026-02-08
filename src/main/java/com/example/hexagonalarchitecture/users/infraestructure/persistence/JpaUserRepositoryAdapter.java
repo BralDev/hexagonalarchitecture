@@ -61,7 +61,8 @@ public class JpaUserRepositoryAdapter implements UserRepositoryPort {
                                 entity.getLastName(),
                                 entity.getEmail(),
                                 entity.getPhone(),
-                                entity.getDocument(),
+                                entity.getDocumentType(),
+                                entity.getDocumentNumber(),
                                 entity.getAddress(),
                                 entity.getStatus(),
                                 entity.getBirthDate());
@@ -76,7 +77,8 @@ public class JpaUserRepositoryAdapter implements UserRepositoryPort {
                                 user.lastName(),
                                 user.email(),
                                 user.phone(),
-                                user.document(),
+                                user.documentType(),
+                                user.documentNumber(),
                                 user.address(),
                                 user.status(),
                                 user.birthDate());
