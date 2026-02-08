@@ -1,9 +1,9 @@
 spring:
   application:
-    name: hexagonal-architecture-example
+    name: hexagonalarchitecture
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://${POSTGRES_SERVER}:${POSTGRES_PORT}/${POSTGRES_DB}
+    url: jdbc:postgresql://${POSTGRES_SERVER}:${DB_INTERNAL_PORT}/${POSTGRES_DB}
     username: ${POSTGRES_USER}
     password: ${POSTGRES_PASSWORD}
   jpa:
@@ -17,7 +17,7 @@ spring:
   config:
     import: optional:file:.env[.properties]
 server:
-  port: ${SPRING_PORT}
+  port: ${APP_INTERNAL_PORT}
 springdoc:
   swagger-ui:
     path: /swagger-ui.html

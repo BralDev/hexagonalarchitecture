@@ -1,39 +1,93 @@
+# ============================================
+# DOCKER COMPOSE - Hexagonal Architecture
+# ============================================
+# Orquesta los servicios: PostgreSQL (DB) + Spring Boot (App)
+# Comando: docker-compose up -d
+# ============================================
 services:
+  # ============================================
+  # SERVICIO 1: PostgreSQL Database
+  # ============================================
   postgres:
-    image: postgres:16
-    container_name: hexagonal-db
+    # Imagen base: PostgreSQL 16 Alpine (ligero, ~240MB)
+    image: postgres:16-alpine
+    
+    # Nombre del contenedor
+    container_name: hexagonalarchitecture-db
+    
+    # Política de reinicio: always = reinicia automáticamente si cae
     restart: always
+    
+    # Cargar variables de entorno desde archivo .env
     env_file:
       - .env
+    
+    # Mapeo de puertos: [puerto_externo]:[puerto_interno]
+    # Acceso externo: localhost:${DB_EXTERNAL_PORT} -> PostgreSQL interno:${DB_INTERNAL_PORT}
     ports:
-      - "5432:5432"
+      - "${DB_EXTERNAL_PORT}:${DB_INTERNAL_PORT}"
+    
+    # Volumen persistente para datos
+    # hexagonalarchitecture_postgres_data: nombre del volumen Docker
+    # /var/lib/postgresql/data: ruta donde PostgreSQL guarda la BD
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - hexagonalarchitecture_postgres_data:/var/lib/postgresql/data
+    
+    # Verificación de salud del contenedor
+    # Ejecuta: pg_isready -U postgres cada 10 segundos
+    # Si falla 5 veces seguidas, marca como unhealthy
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      interval: 10s           # Check cada 10 segundos
+      timeout: 5s             # Espera máximo 5 segundos por respuesta
+      retries: 5              # Falla tras 5 intentos fallidos
 
+  # ============================================
+  # SERVICIO 2: Spring Boot Application
+  # ============================================
   app:
+    # Construir imagen desde Dockerfile local
     build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: hexagonal-app
+      context: .              # Directorio raíz del proyecto
+      dockerfile: Dockerfile  # Ruta al Dockerfile
+    
+    # Nombre del contenedor
+    container_name: hexagonalarchitecture-app
+    
+    # Política de reinicio
     restart: always
+    
+    # Cargar variables de entorno desde .env
     env_file:
       - .env
+    
+    # Mapeo de puertos: [puerto_externo]:[puerto_interno]
+    # Puerto ${APP_EXTERNAL_PORT} externo → ${APP_INTERNAL_PORT} interno (Swagger, API REST)
     ports:
-      - "8080:8080"
+      - "${APP_EXTERNAL_PORT}:${APP_INTERNAL_PORT}"
+    
+    # Esperar a que PostgreSQL esté saludable antes de iniciar app
+    # condition: service_healthy = app solo inicia cuando DB responde
     depends_on:
       postgres:
         condition: service_healthy
+    
+    # Verificación de salud de la aplicación dentro del contenedor
+    # GET a http://localhost:${APP_INTERNAL_PORT}/swagger-ui/index.html
+    # Si responde 200, el contenedor está healthy
     healthcheck:
-      test: ["CMD", "sh", "-c", "wget --quiet --tries=1 --spider http://localhost:8080/swagger-ui/index.html || exit 1"]
-      interval: 15s
-      timeout: 10s
-      retries: 5
-      start_period: 30s
+      test: ["CMD", "sh", "-c", "wget --quiet --tries=1 --spider http://localhost:${APP_INTERNAL_PORT}/swagger-ui/index.html || exit 1"]
+      interval: 15s           # Check cada 15 segundos
+      timeout: 10s            # Espera 10 segundos por respuesta
+      retries: 5              # Falla tras 5 intentos fallidos
+      start_period: 30s       # Gracia de 30s antes de empezar checks (Spring Boot tarda en iniciar)
 
+# ============================================
+# VOLÚMENES PERSISTENTES
+# ============================================
+# Almacenan datos fuera de contenedores, si se borra el contenedor, los datos persisten
 volumes:
-  pgdata:
+  # Volumen de PostgreSQL
+  # Convención: {proyecto}_{servicio}_{tipo}
+  # Almacena: Toda la base de datos
+  hexagonalarchitecture_postgres_data:

@@ -1,56 +1,70 @@
 # ============================================
-# STAGE 1: Build
+# DOCKERFILE - Multi-Stage Build
 # ============================================
-FROM eclipse-temurin:21.0.3_9-jdk AS builder
+# STAGE 1: Compilación (pesado, herramientas de build)
+# STAGE 2: Runtime (ligero, solo JRE)
+# ============================================
 
+# ============================================
+# STAGE 1: Build - Compilar la aplicación
+# ============================================
+# Imagen base con JDK completo para compilar
+FROM eclipse-temurin:21.0.3_9-jdk-alpine AS builder
+
+# Directorio de trabajo dentro del contenedor
 WORKDIR /app
 
-# Copiar archivos de configuración de Maven
+# Copiar configuración de Maven (estas capas se cachean)
 COPY ./pom.xml .
 COPY ./.mvn ./.mvn
 COPY ./mvnw .
 
-# Dar permisos de ejecución a mvnw
+# Dar permisos de ejecución al wrapper de Maven
 RUN chmod +x ./mvnw
 
-# Descargar dependencias (capa cacheada)
+# Descargar dependencias Maven (capa cacheada)
+# Evita descargas repetidas en builds posteriores
 RUN ./mvnw dependency:go-offline
 
-# Copiar código fuente
+# Copiar código fuente (cambios frecuentes, capa no cacheada)
 COPY ./src ./src
 
-# Construir la aplicación
+# Compilar la aplicación
+# -DskipTests: omite tests para acelerar build
 RUN ./mvnw clean package -DskipTests
 
+
 # ============================================
-# STAGE 2: Runtime (Alpine - mucho más ligero)
+# STAGE 2: Runtime - Ejecutar la aplicación
 # ============================================
+# Imagen base con solo JRE (mucho más ligero que JDK)
 FROM eclipse-temurin:21.0.3_9-jre-alpine
 
-# Crear usuario no-root para ejecutar la aplicación
+# Crear grupo de usuario (no-root = seguridad)
+# -S: usuario de sistema (sin shell login)
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
+# Directorio de trabajo
 WORKDIR /app
 
-# Copiar solo el JAR desde el stage de build
-COPY --from=builder /app/target/hexagonal-architecture-example-0.0.1-SNAPSHOT.jar app.jar
+# Copiar JAR compilado desde STAGE 1
+# --from=builder: referencia la capa anterior (Stage 1)
+# --chown: asigna propiedad al usuario appuser en una sola capa
+COPY --from=builder --chown=appuser:appgroup /app/target/hexagonalarchitecture-0.0.1-SNAPSHOT.jar app.jar
 
-# Eliminar cache
-RUN rm -rf /tmp/*
-
-# Cambiar propiedad de archivos al usuario no-root
-RUN chown -R appuser:appgroup /app
-
-# Cambiar a usuario no-root
+# Cambiar a usuario no-root para ejecutar la app, si la app es comprometida, daños limitados
 USER appuser
 
-# Puerto de la aplicación
+# Exponer el puerto (solo documentación, no abre el puerto)
+# El puerto se abre realmente en docker-compose.yml
 EXPOSE 8080
 
-# Optimizaciones JVM para contenedores
+# Comando de inicio
+# Optimizaciones JVM para contenedores:
+#   -XX:+UseContainerSupport: detecta límites de memoria del contenedor
+#   -XX:MaxRAMPercentage=75.0: usa máximo 75% de la RAM disponible
 ENTRYPOINT ["java", \
     "-XX:+UseContainerSupport", \
     "-XX:MaxRAMPercentage=75.0", \
-    "-Djava.security.egd=file:/dev/./urandom", \
     "-jar", \
     "app.jar"]
