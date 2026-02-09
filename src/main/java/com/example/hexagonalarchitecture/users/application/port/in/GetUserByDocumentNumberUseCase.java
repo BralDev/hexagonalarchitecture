@@ -8,16 +8,16 @@ import com.example.hexagonalarchitecture.users.application.port.out.UserReposito
 import com.example.hexagonalarchitecture.users.domain.model.User;
 import com.example.hexagonalarchitecture.users.domain.model.UserStatus;
 
-public class GetUsersByFirstNameUseCase {
+public class GetUserByDocumentNumberUseCase {
 
     private final UserRepositoryPort userRepository;
 
-    public GetUsersByFirstNameUseCase(UserRepositoryPort userRepository) {
+    public GetUserByDocumentNumberUseCase(UserRepositoryPort userRepository) {
         this.userRepository = userRepository;
     }
 
     public PageResult<User> execute(
-            String firstName,
+            String documentNumber,
             UserStatus status,
             int page,
             int size,
@@ -26,13 +26,13 @@ public class GetUsersByFirstNameUseCase {
 
         UserStatus resolvedStatus = status != null ? status : UserStatus.ACTIVE;
 
-        UserSearchFilter filter = new UserSearchFilter(firstName, null, resolvedStatus, null, null);
-
+        UserSearchFilter filter = new UserSearchFilter(null, documentNumber, resolvedStatus, null, null);
+        
         int resolvedPage = Math.max(page, 0);
 
         int resolvedSize = size > 0 ? Math.min(size, 100) : 10;
 
-        UserSortField resolvedSortField = sortField != null ? sortField : UserSortField.FIRST_NAME;
+        UserSortField resolvedSortField = sortField != null ? sortField : UserSortField.DOCUMENT_NUMBER;
 
         SortDirection resolvedDirection = direction != null ? direction : SortDirection.ASC;
 

@@ -2,9 +2,9 @@ package com.example.hexagonalarchitecture.users.application.common;
 
 public enum UserSortField {
 
-    ID("id"),
-    FIRST_NAME("firstName"),
-    LAST_NAME("lastName");
+    ID("id"),    
+    LAST_NAME("lastName"),
+    DOCUMENT_NUMBER("documentNumber");
 
     private final String column;
 

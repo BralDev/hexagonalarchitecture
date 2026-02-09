@@ -11,20 +11,20 @@ public final class UserSpecifications {
         private UserSpecifications() {
         }
 
-        public static Specification<UserEntity> firstNameContains(String firstName) {
-                return (root, query, cb) -> firstName == null
-                                ? null
-                                : cb.like(
-                                                cb.lower(root.get("firstName")),
-                                                "%" + firstName.toLowerCase() + "%");
-        }
-
         public static Specification<UserEntity> lastNameContains(String lastName) {
                 return (root, query, cb) -> lastName == null
                                 ? null
                                 : cb.like(
                                                 cb.lower(root.get("lastName")),
                                                 "%" + lastName.toLowerCase() + "%");
+        }
+
+        public static Specification<UserEntity> documentNumberContains(String documentNumber) {
+                return (root, query, cb) -> documentNumber == null
+                                ? null
+                                : cb.like(
+                                                cb.lower(root.get("documentNumber")),
+                                                "%" + documentNumber.toLowerCase() + "%");
         }
 
         public static Specification<UserEntity> hasStatus(UserStatus status) {
@@ -43,5 +43,5 @@ public final class UserSpecifications {
                 return (root, query, cb) -> to == null
                                 ? null
                                 : cb.lessThanOrEqualTo(root.get("birthDate"), to);
-        }
+        }        
 }

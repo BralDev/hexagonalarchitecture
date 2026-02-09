@@ -14,8 +14,8 @@ import com.example.hexagonalarchitecture.users.application.port.in.ChangePasswor
 import com.example.hexagonalarchitecture.users.application.port.in.CreateUserUseCase;
 import com.example.hexagonalarchitecture.users.application.port.in.DeactivateUserUseCase;
 import com.example.hexagonalarchitecture.users.application.port.in.DeleteUserUseCase;
+import com.example.hexagonalarchitecture.users.application.port.in.GetUserByDocumentNumberUseCase;
 import com.example.hexagonalarchitecture.users.application.port.in.GetUserByIdUseCase;
-import com.example.hexagonalarchitecture.users.application.port.in.GetUsersByFirstNameUseCase;
 import com.example.hexagonalarchitecture.users.application.port.in.GetUsersByLastNameUseCase;
 import com.example.hexagonalarchitecture.users.application.port.in.SearchUsersUseCase;
 import com.example.hexagonalarchitecture.users.application.port.in.UpdateUserUseCase;
@@ -57,9 +57,9 @@ public class UserController {
 	private final ActivateUserUseCase activateUserUseCase;
 	private final DeactivateUserUseCase deactivateUserUseCase;
         private final ChangePasswordUseCase changePasswordUseCase;
-	private final GetUserByIdUseCase getUserUseCase;
-	private final GetUsersByFirstNameUseCase getUsersByFirstNameUseCase;
+	private final GetUserByIdUseCase getUserUseCase;	
 	private final GetUsersByLastNameUseCase getUsersByLastNameUseCase;
+	private final GetUserByDocumentNumberUseCase getUserByDocumentNumberUseCase;
 	private final SearchUsersUseCase searchUsersUseCase;
 
 	public UserController(
@@ -69,9 +69,9 @@ public class UserController {
 			ActivateUserUseCase activateUserUseCase,
 			DeactivateUserUseCase deactivateUserUseCase,
                         ChangePasswordUseCase changePasswordUseCase,
-			GetUserByIdUseCase getUserUseCase,
-			GetUsersByFirstNameUseCase getUsersByFirstNameUseCase,
+			GetUserByIdUseCase getUserUseCase,			
 			GetUsersByLastNameUseCase getUsersByLastNameUseCase,
+                        GetUserByDocumentNumberUseCase getUserByDocumentNumberUseCase,
 			SearchUsersUseCase searchUsersUseCase) {
 		this.createUserUseCase = createUserUseCase;
 		this.updateUserUseCase = updateUserUseCase;
@@ -79,9 +79,9 @@ public class UserController {
 		this.activateUserUseCase = activateUserUseCase;
 		this.deactivateUserUseCase = deactivateUserUseCase;
                 this.changePasswordUseCase = changePasswordUseCase;
-                this.getUserUseCase = getUserUseCase;
-                this.getUsersByFirstNameUseCase = getUsersByFirstNameUseCase;
+                this.getUserUseCase = getUserUseCase;                
                 this.getUsersByLastNameUseCase = getUsersByLastNameUseCase;
+                this.getUserByDocumentNumberUseCase = getUserByDocumentNumberUseCase;
                 this.searchUsersUseCase = searchUsersUseCase;
         }
 
@@ -221,16 +221,16 @@ public class UserController {
                                 request.confirmPassword());
         }
 
-        @GetMapping("/search/firstname")
-        public PageResponse<UserResponse> searchByFirstName(
+        @GetMapping("/search/lastName")
+        public PageResponse<UserResponse> searchByLastName(
                         @RequestParam String value,
                         @RequestParam(required = false, defaultValue = "ACTIVE") UserStatus status,
                         @RequestParam(defaultValue = "0") int page,
                         @RequestParam(defaultValue = "10") int size,
-                        @RequestParam(required = false, defaultValue = "FIRST_NAME") UserSortField sortField,
+                        @RequestParam(required = false, defaultValue = "LAST_NAME") UserSortField sortField,
                         @RequestParam(required = false, defaultValue = "ASC") SortDirection direction) {
 
-                PageResult<User> result = getUsersByFirstNameUseCase.execute(
+                PageResult<User> result = getUsersByLastNameUseCase.execute(
                                 value,
                                 status,
                                 page,
@@ -260,16 +260,16 @@ public class UserController {
                                                 result.totalPages()));
         }
 
-        @GetMapping("/search/lastname")
-        public PageResponse<UserResponse> searchByLastName(
+        @GetMapping("/search/documentNumber")
+        public PageResponse<UserResponse> searchByDocumentNumber(
                         @RequestParam String value,
                         @RequestParam(required = false, defaultValue = "ACTIVE") UserStatus status,
                         @RequestParam(defaultValue = "0") int page,
                         @RequestParam(defaultValue = "10") int size,
-                        @RequestParam(required = false, defaultValue = "LAST_NAME") UserSortField sortField,
+                        @RequestParam(required = false, defaultValue = "DOCUMENT_NUMBER") UserSortField sortField,
                         @RequestParam(required = false, defaultValue = "ASC") SortDirection direction) {
 
-                PageResult<User> result = getUsersByLastNameUseCase.execute(
+                PageResult<User> result = getUserByDocumentNumberUseCase.execute(
                                 value,
                                 status,
                                 page,

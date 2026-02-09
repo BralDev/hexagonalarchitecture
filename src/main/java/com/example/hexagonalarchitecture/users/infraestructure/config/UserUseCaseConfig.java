@@ -11,7 +11,7 @@ import com.example.hexagonalarchitecture.users.application.port.in.CreateUserUse
 import com.example.hexagonalarchitecture.users.application.port.in.DeactivateUserUseCase;
 import com.example.hexagonalarchitecture.users.application.port.in.DeleteUserUseCase;
 import com.example.hexagonalarchitecture.users.application.port.in.GetUserByIdUseCase;
-import com.example.hexagonalarchitecture.users.application.port.in.GetUsersByFirstNameUseCase;
+import com.example.hexagonalarchitecture.users.application.port.in.GetUserByDocumentNumberUseCase;
 import com.example.hexagonalarchitecture.users.application.port.in.GetUsersByLastNameUseCase;
 import com.example.hexagonalarchitecture.users.application.port.in.SearchUsersUseCase;
 import com.example.hexagonalarchitecture.users.application.port.in.UpdateUserUseCase;
@@ -36,10 +36,10 @@ public class UserUseCaseConfig {
     }
 
     @Bean
-    public GetUsersByFirstNameUseCase getUsersByFirstNameUseCase(
+    public GetUserByDocumentNumberUseCase getUserByDocumentNumberUseCase(
             UserRepositoryPort userRepositoryPort
     ) {
-        return new GetUsersByFirstNameUseCase(userRepositoryPort);
+        return new GetUserByDocumentNumberUseCase(userRepositoryPort);
     }
 
     @Bean

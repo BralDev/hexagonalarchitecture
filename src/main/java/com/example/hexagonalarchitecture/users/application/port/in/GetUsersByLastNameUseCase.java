@@ -26,7 +26,7 @@ public class GetUsersByLastNameUseCase {
 
         UserStatus resolvedStatus = status != null ? status : UserStatus.ACTIVE;
 
-        UserSearchFilter filter = new UserSearchFilter(null, lastName, resolvedStatus, null, null);
+        UserSearchFilter filter = new UserSearchFilter(lastName, null, resolvedStatus, null, null);
         
         int resolvedPage = Math.max(page, 0);
 

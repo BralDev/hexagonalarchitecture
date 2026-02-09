@@ -103,8 +103,8 @@ public class JpaUserRepositoryAdapter implements UserRepositoryPort {
                 Pageable pageable = PageRequest.of(page, size, sort);
 
                 Specification<UserEntity> spec = Specification
-                                .where(UserSpecifications.firstNameContains(filter.firstName()))
-                                .and(UserSpecifications.lastNameContains(filter.lastName())
+                                .where(UserSpecifications.lastNameContains(filter.lastName()))
+                                .and(UserSpecifications.documentNumberContains(filter.documentNumber())
                                                 .and(UserSpecifications.hasStatus(filter.status()))
                                                 .and(UserSpecifications.birthDateFrom(filter.birthDateFrom()))
                                                 .and(UserSpecifications.birthDateTo(filter.birthDateTo())));
