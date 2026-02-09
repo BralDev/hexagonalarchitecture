@@ -16,6 +16,16 @@ public class CreateUserUseCase {
     }
 
     public User execute(User user, String rawPassword) {
+        // Validar formato del número de documento
+        if (user.documentType() != null && user.documentNumber() != null) {
+            if (!user.documentType().isValidNumber(user.documentNumber())) {
+                throw new IllegalArgumentException(
+                    "El número de documento no cumple con el formato esperado para " 
+                    + user.documentType().getDescription()
+                );
+            }
+        }
+
         String hashedPassword = passwordEncoder.encode(rawPassword);
         User toCreate = new User(
                 null,
