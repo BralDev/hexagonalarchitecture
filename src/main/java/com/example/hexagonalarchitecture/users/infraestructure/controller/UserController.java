@@ -223,7 +223,7 @@ public class UserController {
 
         @GetMapping("/search/lastName")
         public PageResponse<UserResponse> searchByLastName(
-                        @RequestParam String value,
+                        @RequestParam String lastName,
                         @RequestParam(required = false, defaultValue = "ACTIVE") UserStatus status,
                         @RequestParam(defaultValue = "0") int page,
                         @RequestParam(defaultValue = "10") int size,
@@ -231,7 +231,7 @@ public class UserController {
                         @RequestParam(required = false, defaultValue = "ASC") SortDirection direction) {
 
                 PageResult<User> result = getUsersByLastNameUseCase.execute(
-                                value,
+                                lastName,
                                 status,
                                 page,
                                 size,
@@ -262,7 +262,7 @@ public class UserController {
 
         @GetMapping("/search/documentNumber")
         public PageResponse<UserResponse> searchByDocumentNumber(
-                        @RequestParam String value,
+                        @RequestParam String documentNumber,
                         @RequestParam(required = false, defaultValue = "ACTIVE") UserStatus status,
                         @RequestParam(defaultValue = "0") int page,
                         @RequestParam(defaultValue = "10") int size,
@@ -270,7 +270,7 @@ public class UserController {
                         @RequestParam(required = false, defaultValue = "ASC") SortDirection direction) {
 
                 PageResult<User> result = getUserByDocumentNumberUseCase.execute(
-                                value,
+                                documentNumber,
                                 status,
                                 page,
                                 size,
@@ -300,9 +300,9 @@ public class UserController {
         }
 
         @GetMapping
-        public PageResponse<UserResponse> search(
-                        @RequestParam(required = false) String firstname,
-                        @RequestParam(required = false) String lastname,
+        public PageResponse<UserResponse> search(                        
+                        @RequestParam(required = false) String lastName,
+                        @RequestParam(required = false) String documentNumber,
                         @RequestParam(required = false, defaultValue = "ACTIVE") UserStatus status,
                         @RequestParam(required = false)
                                 @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
@@ -323,9 +323,9 @@ public class UserController {
                         @RequestParam(required = false, defaultValue = "ID") UserSortField sortField,
                         @RequestParam(required = false, defaultValue = "ASC") SortDirection direction) {
 
-                UserSearchFilter filter = new UserSearchFilter(
-                                firstname,
-                                lastname,
+                UserSearchFilter filter = new UserSearchFilter(                                
+                                lastName,
+                                documentNumber,
                                 status,
                                 birthDateFrom,
                                 birthDateTo);
