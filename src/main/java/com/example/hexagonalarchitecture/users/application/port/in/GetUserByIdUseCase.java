@@ -11,7 +11,7 @@ public class GetUserByIdUseCase {
         this.userRepository = userRepository;
     }
 
-    public User execute(Long id) {
+    public User execute(String id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
     }

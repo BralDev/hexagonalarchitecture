@@ -11,8 +11,8 @@ import com.example.hexagonalarchitecture.users.domain.model.User;
 public interface UserRepositoryPort {
     User create(User user, String hashedPassword);
     User update(User user, String passwordHash);
-    Optional<User> findById(Long id);
-    UserWithPassword findByIdWithPassword(Long id);
+    Optional<User> findById(String id);
+    UserWithPassword findByIdWithPassword(String id);
     PageResult<User> search(
         UserSearchFilter filter,
         int page,

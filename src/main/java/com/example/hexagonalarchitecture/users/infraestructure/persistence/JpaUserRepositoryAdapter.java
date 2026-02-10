@@ -38,14 +38,14 @@ public class JpaUserRepositoryAdapter implements UserRepositoryPort {
         }
 
         @Override
-        public Optional<User> findById(Long id) {
+        public Optional<User> findById(String id) {
                 final UserEntity userEntity = springDataUserRepository.findById(id)
                                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
                 return Optional.of(userEntityToDomain(userEntity));
         }
 
         @Override
-        public UserWithPassword findByIdWithPassword(Long id) {
+        public UserWithPassword findByIdWithPassword(String id) {
                 final UserEntity userEntity = springDataUserRepository.findById(id)
                                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
                 return new UserWithPassword(

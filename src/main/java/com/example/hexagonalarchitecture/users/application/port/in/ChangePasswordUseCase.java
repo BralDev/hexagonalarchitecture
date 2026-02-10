@@ -16,7 +16,7 @@ public class ChangePasswordUseCase {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User execute(Long id, String currentPassword, String newPassword, String confirmPassword) {
+    public User execute(String id, String currentPassword, String newPassword, String confirmPassword) {
         UserWithPassword existing = userRepository.findByIdWithPassword(id);
         User user = existing.user();
 

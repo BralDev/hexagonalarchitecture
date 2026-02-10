@@ -3,7 +3,7 @@ package com.example.hexagonalarchitecture.users.domain.model;
 import java.time.LocalDate;
 
 public record User(
-    Long id,
+    String id,
     String username,
     String firstName,
     String lastName,

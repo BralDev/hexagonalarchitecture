@@ -1,5 +1,7 @@
 package com.example.hexagonalarchitecture.users.infraestructure.persistence;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDate;
 
 import com.example.hexagonalarchitecture.users.domain.model.DocumentType;
@@ -16,11 +18,15 @@ import jakarta.persistence.GenerationType;
 
 @Entity
 @Table(name = "users")
-public class UserEntity {
+public class UserEntity implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "id", nullable = false, updatable = false, length = 36)
+    private String id;
 
     @Column(name = "username", nullable = false, unique = true)
     private String username;
@@ -61,7 +67,7 @@ public class UserEntity {
         // Requerido por JPA
     }
 
-    public UserEntity(Long id, String username, String password, String firstName, String lastName,
+    public UserEntity(String id, String username, String password, String firstName, String lastName,
                       String email, String phone, DocumentType documentType, String documentNumber, String address,
                       UserStatus status, LocalDate birthDate) {
         this.id = id;
@@ -78,11 +84,11 @@ public class UserEntity {
         this.birthDate = birthDate;
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

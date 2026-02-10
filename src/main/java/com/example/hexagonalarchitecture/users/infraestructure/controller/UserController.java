@@ -120,7 +120,7 @@ public class UserController {
         }
 
         @GetMapping("/{id}")
-        public UserResponse getById(@PathVariable Long id) {
+        public UserResponse getById(@PathVariable String id) {
                 final User user = getUserUseCase.execute(id);
 
                 return new UserResponse(
@@ -138,7 +138,7 @@ public class UserController {
         }
 
         @PutMapping("/{id}")
-	public UserResponse update(@PathVariable Long id, @Valid @RequestBody UpdateUserRequest request) {
+	public UserResponse update(@PathVariable String id, @Valid @RequestBody UpdateUserRequest request) {
 		final User existingUser = getUserUseCase.execute(id);
 			
 		final User user = new User(
@@ -171,12 +171,12 @@ public class UserController {
 
         @DeleteMapping("/{id}")
         @ResponseStatus(HttpStatus.NO_CONTENT)
-        public void deleteById(@PathVariable Long id) {
+        public void deleteById(@PathVariable String id) {
                 deleteUserUseCase.execute(id);
         }
 
         @PostMapping("/{id}/activate")
-        public UserResponse activateById(@PathVariable Long id) {
+        public UserResponse activateById(@PathVariable String id) {
                 final User activatedUser = activateUserUseCase.execute(id);
 
                 return new UserResponse(
@@ -194,7 +194,7 @@ public class UserController {
         }
 
         @PostMapping("/{id}/deactivate")
-        public UserResponse deactivateById(@PathVariable Long id) {
+        public UserResponse deactivateById(@PathVariable String id) {
                 final User deactivatedUser = deactivateUserUseCase.execute(id);
 
                 return new UserResponse(
@@ -213,7 +213,7 @@ public class UserController {
 
         @PostMapping("/{id}/password")
         @ResponseStatus(HttpStatus.NO_CONTENT)
-        public void changePassword(@PathVariable Long id, @Valid @RequestBody ChangePasswordRequest request) {
+        public void changePassword(@PathVariable String id, @Valid @RequestBody ChangePasswordRequest request) {
                 changePasswordUseCase.execute(
                                 id,
                                 request.currentPassword(),

@@ -12,7 +12,7 @@ public class UpdateUserUseCase {
         this.userRepository = userRepository;
     }
 
-    public User execute(Long id, User user) {
+    public User execute(String id, User user) {
         UserWithPassword existing = userRepository.findByIdWithPassword(id);
 
         User toUpdate = new User(

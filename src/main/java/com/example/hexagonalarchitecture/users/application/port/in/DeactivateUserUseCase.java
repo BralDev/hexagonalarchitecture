@@ -13,7 +13,7 @@ public class DeactivateUserUseCase {
         this.userRepository = userRepository;
     }
 
-    public User execute(Long id) {
+    public User execute(String id) {
         UserWithPassword existing = userRepository.findByIdWithPassword(id);
         User user = existing.user();
 

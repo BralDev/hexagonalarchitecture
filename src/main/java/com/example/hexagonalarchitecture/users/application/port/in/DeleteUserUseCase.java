@@ -13,7 +13,7 @@ public class DeleteUserUseCase {
         this.userRepository = userRepository;
     }
 
-    public void execute(Long id) {
+    public void execute(String id) {
         UserWithPassword existing = userRepository.findByIdWithPassword(id);
         User user = existing.user();
 

@@ -6,7 +6,7 @@ import com.example.hexagonalarchitecture.users.domain.model.DocumentType;
 import com.example.hexagonalarchitecture.users.domain.model.UserStatus;
 
 public record UserResponse(
-    Long id,
+    String id,
     String username,
     String firstName,
     String lastName,
