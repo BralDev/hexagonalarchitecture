@@ -3,6 +3,7 @@ package com.example.hexagonalarchitecture.users.application.port.in;
 import com.example.hexagonalarchitecture.users.application.port.out.UserRepositoryPort;
 import com.example.hexagonalarchitecture.users.domain.model.User;
 import com.example.hexagonalarchitecture.users.domain.model.UserStatus;
+import com.example.hexagonalarchitecture.users.infraestructure.exception.InvalidDocumentException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class CreateUserUseCase {
@@ -19,7 +20,7 @@ public class CreateUserUseCase {
         // Validar formato del número de documento
         if (user.documentType() != null && user.documentNumber() != null) {
             if (!user.documentType().isValidNumber(user.documentNumber())) {
-                throw new IllegalArgumentException(
+                throw new InvalidDocumentException(
                     "El número de documento no cumple con el formato esperado para " 
                     + user.documentType().getDescription()
                 );

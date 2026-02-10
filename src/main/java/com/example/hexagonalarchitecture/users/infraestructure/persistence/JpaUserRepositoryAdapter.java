@@ -17,6 +17,7 @@ import com.example.hexagonalarchitecture.users.application.common.UserSortField;
 import com.example.hexagonalarchitecture.users.application.port.out.UserRepositoryPort;
 import com.example.hexagonalarchitecture.users.application.port.out.UserWithPassword;
 import com.example.hexagonalarchitecture.users.domain.model.User;
+import com.example.hexagonalarchitecture.users.infraestructure.exception.EntityNotFoundException;
 
 @Repository
 public class JpaUserRepositoryAdapter implements UserRepositoryPort {
@@ -40,14 +41,14 @@ public class JpaUserRepositoryAdapter implements UserRepositoryPort {
         @Override
         public Optional<User> findById(String id) {
                 final UserEntity userEntity = springDataUserRepository.findById(id)
-                                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con id: " + id));
                 return Optional.of(userEntityToDomain(userEntity));
         }
 
         @Override
         public UserWithPassword findByIdWithPassword(String id) {
                 final UserEntity userEntity = springDataUserRepository.findById(id)
-                                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con id: " + id));
                 return new UserWithPassword(
                                 userEntityToDomain(userEntity),
                                 userEntity.getPassword());

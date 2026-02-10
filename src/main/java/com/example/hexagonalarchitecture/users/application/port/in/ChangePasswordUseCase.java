@@ -5,6 +5,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import com.example.hexagonalarchitecture.users.application.port.out.UserRepositoryPort;
 import com.example.hexagonalarchitecture.users.application.port.out.UserWithPassword;
 import com.example.hexagonalarchitecture.users.domain.model.User;
+import com.example.hexagonalarchitecture.users.infraestructure.exception.InvalidPasswordException;
 
 public class ChangePasswordUseCase {
 
@@ -21,11 +22,11 @@ public class ChangePasswordUseCase {
         User user = existing.user();
 
         if (!passwordEncoder.matches(currentPassword, existing.passwordHash())) {
-            throw new IllegalArgumentException("Current password is incorrect");
+            throw new InvalidPasswordException("La contraseña actual es incorrecta");
         }
 
         if (!newPassword.equals(confirmPassword)) {
-            throw new IllegalArgumentException("New password and confirm password do not match");
+            throw new InvalidPasswordException("La nueva contraseña y la confirmación no coinciden");
         }
 
         String hashedPassword = passwordEncoder.encode(newPassword);
