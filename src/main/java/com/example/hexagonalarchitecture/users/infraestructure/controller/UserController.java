@@ -45,6 +45,8 @@ import jakarta.validation.Valid;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 @Tag(name = "Users", description = "Operaciones relacionadas con usuarios")
 @RestController
@@ -86,6 +88,9 @@ public class UserController {
         }
 
         @PostMapping
+        @Operation(summary = "Crear usuario", description = "Crea un nuevo usuario en el sistema con validación de documento")
+        @ApiResponse(responseCode = "201", description = "Usuario creado exitosamente")
+        @ApiResponse(responseCode = "400", description = "Datos inválidos o documento con formato incorrecto")
 	public ResponseEntity<UserResponse> create(@Valid @RequestBody CreateUserRequest request) {
 		final User user = new User(
 				null,
@@ -120,6 +125,9 @@ public class UserController {
         }
 
         @GetMapping("/{id}")
+        @Operation(summary = "Obtener usuario por ID", description = "Recupera los datos de un usuario específico por su identificador")
+        @ApiResponse(responseCode = "200", description = "Usuario encontrado")
+        @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
         public UserResponse getById(@PathVariable String id) {
                 final User user = getUserUseCase.execute(id);
 
@@ -138,6 +146,10 @@ public class UserController {
         }
 
         @PutMapping("/{id}")
+        @Operation(summary = "Actualizar usuario", description = "Actualiza los datos de un usuario existente (excepto documento)")
+        @ApiResponse(responseCode = "200", description = "Usuario actualizado exitosamente")
+        @ApiResponse(responseCode = "400", description = "Datos inválidos")
+        @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
 	public UserResponse update(@PathVariable String id, @Valid @RequestBody UpdateUserRequest request) {
 		final User existingUser = getUserUseCase.execute(id);
 			
@@ -171,11 +183,17 @@ public class UserController {
 
         @DeleteMapping("/{id}")
         @ResponseStatus(HttpStatus.NO_CONTENT)
+        @Operation(summary = "Eliminar usuario", description = "Realiza eliminación lógica del usuario (cambia estado a DELETED)")
+        @ApiResponse(responseCode = "204", description = "Usuario eliminado exitosamente")
+        @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
         public void deleteById(@PathVariable String id) {
                 deleteUserUseCase.execute(id);
         }
 
         @PostMapping("/{id}/activate")
+        @Operation(summary = "Activar usuario", description = "Cambia el estado del usuario a ACTIVE")
+        @ApiResponse(responseCode = "200", description = "Usuario activado exitosamente")
+        @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
         public UserResponse activateById(@PathVariable String id) {
                 final User activatedUser = activateUserUseCase.execute(id);
 
@@ -194,6 +212,9 @@ public class UserController {
         }
 
         @PostMapping("/{id}/deactivate")
+        @Operation(summary = "Desactivar usuario", description = "Cambia el estado del usuario a INACTIVE")
+        @ApiResponse(responseCode = "200", description = "Usuario desactivado exitosamente")
+        @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
         public UserResponse deactivateById(@PathVariable String id) {
                 final User deactivatedUser = deactivateUserUseCase.execute(id);
 
@@ -213,6 +234,10 @@ public class UserController {
 
         @PostMapping("/{id}/password")
         @ResponseStatus(HttpStatus.NO_CONTENT)
+        @Operation(summary = "Cambiar contraseña", description = "Cambia la contraseña del usuario verificando la contraseña actual")
+        @ApiResponse(responseCode = "204", description = "Contraseña cambiada exitosamente")
+        @ApiResponse(responseCode = "400", description = "Contraseña actual incorrecta o confirmación no coincide")
+        @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
         public void changePassword(@PathVariable String id, @Valid @RequestBody ChangePasswordRequest request) {
                 changePasswordUseCase.execute(
                                 id,
@@ -222,6 +247,8 @@ public class UserController {
         }
 
         @GetMapping("/search/lastName")
+        @Operation(summary = "Buscar usuarios por apellido", description = "Busca usuarios filtrando por apellido con paginación")
+        @ApiResponse(responseCode = "200", description = "Búsqueda realizada exitosamente")
         public PageResponse<UserResponse> searchByLastName(
                         @RequestParam String lastName,
                         @RequestParam(required = false, defaultValue = "ACTIVE") UserStatus status,
@@ -261,6 +288,8 @@ public class UserController {
         }
 
         @GetMapping("/search/documentNumber")
+        @Operation(summary = "Buscar usuarios por documento", description = "Busca usuarios filtrando por número de documento con paginación")
+        @ApiResponse(responseCode = "200", description = "Búsqueda realizada exitosamente")
         public PageResponse<UserResponse> searchByDocumentNumber(
                         @RequestParam String documentNumber,
                         @RequestParam(required = false, defaultValue = "ACTIVE") UserStatus status,
@@ -300,6 +329,8 @@ public class UserController {
         }
 
         @GetMapping
+        @Operation(summary = "Buscar usuarios (búsqueda avanzada)", description = "Búsqueda avanzada de usuarios por múltiples criterios: apellido, documento, estado, rango de fecha de nacimiento con paginación")
+        @ApiResponse(responseCode = "200", description = "Búsqueda realizada exitosamente")
         public PageResponse<UserResponse> search(                        
                         @RequestParam(required = false) String lastName,
                         @RequestParam(required = false) String documentNumber,
