@@ -88,9 +88,12 @@ public class UserController {
         }
 
         @PostMapping
-        @Operation(summary = "Crear usuario", description = "Crea un nuevo usuario en el sistema con validación de documento")
-        @ApiResponse(responseCode = "201", description = "Usuario creado exitosamente")
-        @ApiResponse(responseCode = "400", description = "Datos inválidos o documento con formato incorrecto")
+        @Operation(
+            summary = "Crear usuario",
+            description = "Crea un nuevo usuario en el sistema con validación de documento. El documento debe cumplir con el formato del tipo seleccionado: DNI (8 dígitos), CE (1-20 caracteres numéricos), PASSPORT (6-20 alfanuméricos), TI (1-20 numéricos). La contraseña debe tener mínimo 8 caracteres. Usuario es creado con estado ACTIVE por defecto. Ejemplo JSON: {\"username\":\"juan.perez\",\"firstName\":\"Juan\",\"lastName\":\"Perez\",\"email\":\"juan@example.com\",\"phone\":\"3101234567\",\"documentType\":\"DNI\",\"documentNumber\":\"12345678\",\"address\":\"Calle 123 #45\",\"birthDate\":\"1990-05-15\",\"password\":\"Secure123!@\"}"
+        )
+        @ApiResponse(responseCode = "201", description = "Usuario creado exitosamente. Retorna el usuario con estado ACTIVE")
+        @ApiResponse(responseCode = "400", description = "Error de validación: valores inválidos, documento mal formateado, username/email duplicado")
 	public ResponseEntity<UserResponse> create(@Valid @RequestBody CreateUserRequest request) {
 		final User user = new User(
 				null,
@@ -125,9 +128,12 @@ public class UserController {
         }
 
         @GetMapping("/{id}")
-        @Operation(summary = "Obtener usuario por ID", description = "Recupera los datos de un usuario específico por su identificador")
-        @ApiResponse(responseCode = "200", description = "Usuario encontrado")
-        @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
+        @Operation(
+            summary = "Obtener usuario por ID",
+            description = "Recupera todos los datos de un usuario específico. El ID es un UUID generado automáticamente al crear el usuario. Ejemplo: GET /users/550e8400-e29b-41d4-a716-446655440000"
+        )
+        @ApiResponse(responseCode = "200", description = "Usuario encontrado. Retorna objeto completo del usuario")
+        @ApiResponse(responseCode = "404", description = "Usuario no encontrado con el ID proporcionado")
         public UserResponse getById(@PathVariable String id) {
                 final User user = getUserUseCase.execute(id);
 
@@ -146,9 +152,12 @@ public class UserController {
         }
 
         @PutMapping("/{id}")
-        @Operation(summary = "Actualizar usuario", description = "Actualiza los datos de un usuario existente (excepto documento)")
+        @Operation(
+            summary = "Actualizar usuario",
+            description = "Actualiza los datos de un usuario existente. IMPORTANTE: El tipo y número de documento NO pueden ser modificados. Solo se pueden actualizar: username, firstName, lastName, email, phone, address, birthDate, status. Ejemplo: PUT /users/550e8400-e29b-41d4-a716-446655440000 con JSON: {\"username\":\"juan.p\",\"firstName\":\"Juan\",\"lastName\":\"Perez Updated\",\"email\":\"juan.new@example.com\",\"phone\":\"3109999999\",\"address\":\"Calle 999 #99\",\"birthDate\":\"1990-05-15\",\"status\":\"ACTIVE\"}"
+        )
         @ApiResponse(responseCode = "200", description = "Usuario actualizado exitosamente")
-        @ApiResponse(responseCode = "400", description = "Datos inválidos")
+        @ApiResponse(responseCode = "400", description = "Datos inválidos o validación fallida")
         @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
 	public UserResponse update(@PathVariable String id, @Valid @RequestBody UpdateUserRequest request) {
 		final User existingUser = getUserUseCase.execute(id);
@@ -183,16 +192,22 @@ public class UserController {
 
         @DeleteMapping("/{id}")
         @ResponseStatus(HttpStatus.NO_CONTENT)
-        @Operation(summary = "Eliminar usuario", description = "Realiza eliminación lógica del usuario (cambia estado a DELETED)")
-        @ApiResponse(responseCode = "204", description = "Usuario eliminado exitosamente")
+        @Operation(
+            summary = "Eliminar usuario",
+            description = "Realiza eliminación LÓGICA del usuario (soft delete). El usuario NO se elimina de la base de datos, solo cambia su estado a DELETED. El usuario no aparecerá en búsquedas por estado ACTIVE. Ejemplo: DELETE /users/550e8400-e29b-41d4-a716-446655440000"
+        )
+        @ApiResponse(responseCode = "204", description = "Usuario eliminado exitosamente (sin contenido en respuesta)")
         @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
         public void deleteById(@PathVariable String id) {
                 deleteUserUseCase.execute(id);
         }
 
         @PostMapping("/{id}/activate")
-        @Operation(summary = "Activar usuario", description = "Cambia el estado del usuario a ACTIVE")
-        @ApiResponse(responseCode = "200", description = "Usuario activado exitosamente")
+        @Operation(
+            summary = "Activar usuario",
+            description = "Cambia el estado del usuario a ACTIVE. El usuario podrá ser encontrado en búsquedas. Ejemplo: POST /users/550e8400-e29b-41d4-a716-446655440000/activate"
+        )
+        @ApiResponse(responseCode = "200", description = "Usuario activado exitosamente. Retorna el usuario con estado ACTIVE")
         @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
         public UserResponse activateById(@PathVariable String id) {
                 final User activatedUser = activateUserUseCase.execute(id);
@@ -212,8 +227,11 @@ public class UserController {
         }
 
         @PostMapping("/{id}/deactivate")
-        @Operation(summary = "Desactivar usuario", description = "Cambia el estado del usuario a INACTIVE")
-        @ApiResponse(responseCode = "200", description = "Usuario desactivado exitosamente")
+        @Operation(
+            summary = "Desactivar usuario",
+            description = "Cambia el estado del usuario a INACTIVE. El usuario no aparecerá en búsquedas por estado ACTIVE. Ejemplo: POST /users/550e8400-e29b-41d4-a716-446655440000/deactivate"
+        )
+        @ApiResponse(responseCode = "200", description = "Usuario desactivado exitosamente. Retorna el usuario con estado INACTIVE")
         @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
         public UserResponse deactivateById(@PathVariable String id) {
                 final User deactivatedUser = deactivateUserUseCase.execute(id);
@@ -234,9 +252,12 @@ public class UserController {
 
         @PostMapping("/{id}/password")
         @ResponseStatus(HttpStatus.NO_CONTENT)
-        @Operation(summary = "Cambiar contraseña", description = "Cambia la contraseña del usuario verificando la contraseña actual")
-        @ApiResponse(responseCode = "204", description = "Contraseña cambiada exitosamente")
-        @ApiResponse(responseCode = "400", description = "Contraseña actual incorrecta o confirmación no coincide")
+        @Operation(
+            summary = "Cambiar contraseña",
+            description = "Cambia la contraseña del usuario. Requiere proporcionar la contraseña actual para validación. Las contraseñas nuevas deben coinciden exactamente. Mínimo 8 caracteres. Ejemplo: POST /users/550e8400-e29b-41d4-a716-446655440000/password con JSON: {\"currentPassword\":\"OldPass123!@\",\"newPassword\":\"NewPass456!@\",\"confirmPassword\":\"NewPass456!@\"}"
+        )
+        @ApiResponse(responseCode = "204", description = "Contraseña cambiada exitosamente (sin contenido en respuesta)")
+        @ApiResponse(responseCode = "400", description = "Contraseña actual incorrecta o nuevas contraseñas no coinciden")
         @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
         public void changePassword(@PathVariable String id, @Valid @RequestBody ChangePasswordRequest request) {
                 changePasswordUseCase.execute(
@@ -247,8 +268,11 @@ public class UserController {
         }
 
         @GetMapping("/search/lastName")
-        @Operation(summary = "Buscar usuarios por apellido", description = "Busca usuarios filtrando por apellido con paginación")
-        @ApiResponse(responseCode = "200", description = "Búsqueda realizada exitosamente")
+        @Operation(
+            summary = "Buscar usuarios por apellido",
+            description = "Busca usuarios filtrando por apellido (búsqueda parcial, case-insensitive) con paginación. Parámetros: lastName (String, requerido), status (UserStatus, default: ACTIVE), page (int, default: 0), size (int, default: 10, máximo: 100), sortField (UserSortField: ID/LAST_NAME/DOCUMENT_NUMBER, default: LAST_NAME), direction (SortDirection: ASC/DESC, default: ASC). Ejemplo: GET /users/search/lastName?lastName=Garcia&status=ACTIVE&page=0&size=10&sortField=LAST_NAME&direction=ASC"
+        )
+        @ApiResponse(responseCode = "200", description = "Búsqueda realizada exitosamente. Retorna lista paginada de usuarios")
         public PageResponse<UserResponse> searchByLastName(
                         @RequestParam String lastName,
                         @RequestParam(required = false, defaultValue = "ACTIVE") UserStatus status,
@@ -288,8 +312,11 @@ public class UserController {
         }
 
         @GetMapping("/search/documentNumber")
-        @Operation(summary = "Buscar usuarios por documento", description = "Busca usuarios filtrando por número de documento con paginación")
-        @ApiResponse(responseCode = "200", description = "Búsqueda realizada exitosamente")
+        @Operation(
+            summary = "Buscar usuarios por número de documento",
+            description = "Busca usuarios filtrando por número de documento (búsqueda parcial, case-insensitive) con paginación. Parámetros: documentNumber (String, requerido), status (UserStatus, default: ACTIVE), page (int, default: 0), size (int, default: 10, máximo: 100), sortField (UserSortField: ID/LAST_NAME/DOCUMENT_NUMBER, default: DOCUMENT_NUMBER), direction (SortDirection: ASC/DESC, default: ASC). Ejemplo: GET /users/search/documentNumber?documentNumber=12345&status=ACTIVE&page=0&size=10"
+        )
+        @ApiResponse(responseCode = "200", description = "Búsqueda realizada exitosamente. Retorna lista paginada de usuarios")
         public PageResponse<UserResponse> searchByDocumentNumber(
                         @RequestParam String documentNumber,
                         @RequestParam(required = false, defaultValue = "ACTIVE") UserStatus status,
@@ -329,8 +356,11 @@ public class UserController {
         }
 
         @GetMapping
-        @Operation(summary = "Buscar usuarios (búsqueda avanzada)", description = "Búsqueda avanzada de usuarios por múltiples criterios: apellido, documento, estado, rango de fecha de nacimiento con paginación")
-        @ApiResponse(responseCode = "200", description = "Búsqueda realizada exitosamente")
+        @Operation(
+            summary = "Búsqueda avanzada de usuarios",
+            description = "Búsqueda con múltiples criterios opcionales: apellido, número de documento, estado, rango de fecha de nacimiento. Parámetros: lastname (String, opcional), documentNumber (String, opcional), status (UserStatus, default: ACTIVE), birthDateFrom (LocalDate, formato: yyyy-MM-dd, opcional), birthDateTo (LocalDate, formato: yyyy-MM-dd, opcional), page (int, default: 0), size (int, default: 10, máximo: 100), sortField (UserSortField: ID/LAST_NAME/DOCUMENT_NUMBER, default: ID), direction (SortDirection: ASC/DESC, default: ASC). Ejemplo: GET /users?lastname=Garcia&documentNumber=123&status=ACTIVE&birthDateFrom=1990-01-01&birthDateTo=2000-12-31&page=0&size=10"
+        )
+        @ApiResponse(responseCode = "200", description = "Búsqueda realizada exitosamente. Retorna lista paginada de usuarios")
         public PageResponse<UserResponse> search(                        
                         @RequestParam(required = false) String lastName,
                         @RequestParam(required = false) String documentNumber,
