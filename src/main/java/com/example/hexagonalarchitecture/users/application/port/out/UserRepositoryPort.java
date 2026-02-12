@@ -19,4 +19,8 @@ public interface UserRepositoryPort {
         int size,
         UserSortField sortField,
         SortDirection direction);
+    
+    boolean existsByUsername(String username);
+    boolean existsByEmail(String email);
+    boolean existsByDocumentNumber(String documentNumber);
 }

@@ -123,4 +123,19 @@ public class JpaUserRepositoryAdapter implements UserRepositoryPort {
                                 result.getTotalElements(),
                                 result.getTotalPages());
         }
+        
+        @Override
+        public boolean existsByUsername(String username) {
+                return springDataUserRepository.existsByUsername(username);
+        }
+        
+        @Override
+        public boolean existsByEmail(String email) {
+                return springDataUserRepository.existsByEmail(email);
+        }
+        
+        @Override
+        public boolean existsByDocumentNumber(String documentNumber) {
+                return springDataUserRepository.existsByDocumentNumber(documentNumber);
+        }
 }

@@ -93,7 +93,8 @@ public class UserController {
             description = "Crea un nuevo usuario en el sistema con validación de documento. El documento debe cumplir con el formato del tipo seleccionado: DNI (8 dígitos), CE (1-20 caracteres numéricos), PASSPORT (6-20 alfanuméricos), TI (1-20 numéricos). La contraseña debe tener mínimo 8 caracteres. Usuario es creado con estado ACTIVE por defecto. Ejemplo JSON: {\"username\":\"juan.perez\",\"firstName\":\"Juan\",\"lastName\":\"Perez\",\"email\":\"juan@example.com\",\"phone\":\"3101234567\",\"documentType\":\"DNI\",\"documentNumber\":\"12345678\",\"address\":\"Calle 123 #45\",\"birthDate\":\"1990-05-15\",\"password\":\"Secure123!@\"}"
         )
         @ApiResponse(responseCode = "201", description = "Usuario creado exitosamente. Retorna el usuario con estado ACTIVE")
-        @ApiResponse(responseCode = "400", description = "Error de validación: valores inválidos, documento mal formateado, username/email duplicado")
+        @ApiResponse(responseCode = "400", description = "Error de validación: valores inválidos, documento mal formateado, edad menor a 18 años")
+        @ApiResponse(responseCode = "409", description = "Conflicto: username, email o documento ya existe en el sistema")
 	public ResponseEntity<UserResponse> create(@Valid @RequestBody CreateUserRequest request) {
 		final User user = new User(
 				null,
@@ -159,6 +160,7 @@ public class UserController {
         @ApiResponse(responseCode = "200", description = "Usuario actualizado exitosamente")
         @ApiResponse(responseCode = "400", description = "Datos inválidos o validación fallida")
         @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
+        @ApiResponse(responseCode = "409", description = "Conflicto: username o email ya existe en otro usuario")
 	public UserResponse update(@PathVariable String id, @Valid @RequestBody UpdateUserRequest request) {
 		final User existingUser = getUserUseCase.execute(id);
 			
@@ -194,9 +196,10 @@ public class UserController {
         @ResponseStatus(HttpStatus.NO_CONTENT)
         @Operation(
             summary = "Eliminar usuario",
-            description = "Realiza eliminación LÓGICA del usuario (soft delete). El usuario NO se elimina de la base de datos, solo cambia su estado a DELETED. El usuario no aparecerá en búsquedas por estado ACTIVE. Ejemplo: DELETE /users/550e8400-e29b-41d4-a716-446655440000"
+            description = "Realiza eliminación LÓGICA del usuario (soft delete). El usuario NO se elimina de la base de datos, solo cambia su estado a DELETED. El usuario no aparecerá en búsquedas por estado ACTIVE. IMPORTANTE: No se puede eliminar al usuario administrador del sistema. Ejemplo: DELETE /users/550e8400-e29b-41d4-a716-446655440000"
         )
         @ApiResponse(responseCode = "204", description = "Usuario eliminado exitosamente (sin contenido en respuesta)")
+        @ApiResponse(responseCode = "400", description = "No se puede eliminar al usuario administrador")
         @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
         public void deleteById(@PathVariable String id) {
                 deleteUserUseCase.execute(id);

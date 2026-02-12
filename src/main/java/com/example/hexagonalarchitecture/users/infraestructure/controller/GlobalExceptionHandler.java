@@ -2,6 +2,7 @@ package com.example.hexagonalarchitecture.users.infraestructure.controller;
 
 import java.time.LocalDateTime;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -242,6 +243,43 @@ public class GlobalExceptionHandler {
             request.getRequestURI()
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    /**
+     * Maneja excepciones {@link DataIntegrityViolationException}.
+     * 
+     * Lanzada por Spring cuando se viola una restricción de base de datos (UNIQUE, FOREIGN KEY, etc.).
+     * Actúa como respaldo en caso de que las validaciones previas fallen o se omitan.
+     * Este handler captura violaciones de constraint UNIQUE en username, email o documentNumber.
+     * 
+     * Retorna:
+     * - HTTP 409 (CONFLICT)
+     * - Código de error: "DUPLICATE_ENTRY"
+     * - Mensaje: genérico para no exponer estructura interna de BD
+     * 
+     * @param ex excepción de violación de integridad de datos
+     * @param request solicitud HTTP para capturar el path
+     * @return ResponseEntity con ErrorResponse y status 409
+     * 
+     * @example
+     *   POST /users (username duplicado que evadió validación previa)
+     *   Response 409: { "status": 409, "error": "DUPLICATE_ENTRY", "message": "Ya existe un registro con los datos proporcionados..." }
+     */
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> handleDataIntegrityViolation(
+            DataIntegrityViolationException ex,
+            HttpServletRequest request) {
+        
+        String message = "Ya existe un registro con los datos proporcionados. Verifique que el username, email o documento no estén duplicados";
+        
+        ErrorResponse error = new ErrorResponse(
+            LocalDateTime.now(),
+            HttpStatus.CONFLICT.value(),
+            "DUPLICATE_ENTRY",
+            message,
+            request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 
     /**
