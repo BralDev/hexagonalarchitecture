@@ -5,6 +5,9 @@ import com.example.hexagonalarchitecture.users.application.port.out.UserWithPass
 import com.example.hexagonalarchitecture.users.domain.model.User;
 import com.example.hexagonalarchitecture.users.domain.model.UserStatus;
 
+/**
+ * Caso de uso para activar usuarios cambiando su estado a ACTIVE.
+ */
 public class ActivateUserUseCase {
 
     private final UserRepositoryPort userRepository;
@@ -13,6 +16,12 @@ public class ActivateUserUseCase {
         this.userRepository = userRepository;
     }
 
+    /**
+     * Activa un usuario cambiando su estado a ACTIVE.
+     * 
+     * @param id identificador UUID del usuario
+     * @return usuario activado
+     */
     public User execute(String id) {
         UserWithPassword existing = userRepository.findByIdWithPassword(id);
         User user = existing.user();

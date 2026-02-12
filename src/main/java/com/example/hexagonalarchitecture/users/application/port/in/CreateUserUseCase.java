@@ -10,6 +10,20 @@ import com.example.hexagonalarchitecture.users.infraestructure.exception.Invalid
 import com.example.hexagonalarchitecture.users.infraestructure.exception.ValidationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+/**
+ * Caso de uso para crear nuevos usuarios en el sistema.
+ * <p>
+ * Responsabilidades:
+ * - Validar formato del número de documento según su tipo (DNI, CE, PASSPORT, TI)
+ * - Validar unicidad de username, email y número de documento
+ * - Validar edad mínima de 18 años
+ * - Hashear la contraseña con BCrypt antes de persistir
+ * - Asignar estado ACTIVE por defecto
+ * <p>
+ * Excepciones lanzadas:
+ * - {@link InvalidDocumentException} si el formato del documento es inválido
+ * - {@link ValidationException} si username/email/documento está duplicado o edad < 18
+ */
 public class CreateUserUseCase {
 
     private final UserRepositoryPort userRepository;
@@ -20,6 +34,15 @@ public class CreateUserUseCase {
         this.passwordEncoder = passwordEncoder;
     }
 
+    /**
+     * Crea un nuevo usuario aplicando todas las validaciones de negocio.
+     * 
+     * @param user datos del usuario a crear (sin ID, será generado automáticamente)
+     * @param rawPassword contraseña en texto plano (será hasheada antes de persistir)
+     * @return usuario creado con ID generado y estado ACTIVE
+     * @throws InvalidDocumentException si el formato del documento no coincide con su tipo
+     * @throws ValidationException si username/email/documento duplicado o edad menor a 18 años
+     */
     public User execute(User user, String rawPassword) {
         // Validar formato del número de documento
         if (user.documentType() != null && user.documentNumber() != null) {

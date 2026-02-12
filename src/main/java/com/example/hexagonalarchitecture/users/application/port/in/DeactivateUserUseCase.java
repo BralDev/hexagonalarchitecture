@@ -5,6 +5,9 @@ import com.example.hexagonalarchitecture.users.application.port.out.UserWithPass
 import com.example.hexagonalarchitecture.users.domain.model.User;
 import com.example.hexagonalarchitecture.users.domain.model.UserStatus;
 
+/**
+ * Caso de uso para desactivar usuarios cambiando su estado a INACTIVE.
+ */
 public class DeactivateUserUseCase {
 
     private final UserRepositoryPort userRepository;
@@ -13,6 +16,12 @@ public class DeactivateUserUseCase {
         this.userRepository = userRepository;
     }
 
+    /**
+     * Desactiva un usuario cambiando su estado a INACTIVE.
+     * 
+     * @param id identificador UUID del usuario
+     * @return usuario desactivado
+     */
     public User execute(String id) {
         UserWithPassword existing = userRepository.findByIdWithPassword(id);
         User user = existing.user();
